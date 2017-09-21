@@ -1,0 +1,59 @@
+.options-container {
+  justify-content: space-between;
+  margin: 10px 0 10px 0;
+}
+
+.option {
+  align-items: center;
+
+  span {
+    margin-right: 8px;
+  }
+}
+
+.search {
+  margin: 10px 0 10px 0;
+}
+
+.registrations-wrapper {
+
+  .registrations-header {
+    display: flex;
+    align-items: flex-end;
+
+    span:last-child {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    span {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .registrations-body {
+    border: 1px solid black;
+    box-shadow: 4px 1px 2px grey;
+    height: auto;
+    height: calc(100vh - 300px);
+    height: -webkit-calc(100vh - 300px);
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+
+    a:nth-child(even) {
+      background: #E1E1E1
+    }
+  }
+}
+
+.collected-text {
+  color: green;
+}
+
+.registration-box-link {
+  color: black;
+}
