@@ -16,6 +16,7 @@ export class LevelCheck extends React.Component {
       intermediateFilter: ['Intermediate'],
       advancedFilter: ['Advanced'],
       currentFilter: ['Intermediate'],
+      title: 'Intermediate',
       showLeads: true,
       loading: true,
     };
@@ -70,6 +71,7 @@ export class LevelCheck extends React.Component {
         filteredLeads: filters.filteredLeads,
         filteredFollows: filters.filteredFollows,
         currentFilter: filter,
+        title: filter[0],
       });
     });
   }
@@ -119,7 +121,7 @@ export class LevelCheck extends React.Component {
     };
     return (
       <div className="level-check-wrapper container form-container">
-        <h1 className="text-center">Level Check</h1>
+        <h1 className="text-center">{this.state.title} Level Check</h1>
         <div className="header-links">
           <Link to="/admin"><button className="btn btn-primary">Back to Admin</button></Link>
           <Link to="/admin/levelcheckupdates">View Completed Level Checks</Link>

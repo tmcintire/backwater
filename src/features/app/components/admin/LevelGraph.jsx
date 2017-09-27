@@ -2,8 +2,8 @@ import React from 'react';
 
 export class LevelGraph extends React.Component {
   render() {
-    const numLeads = this.props.registrations.filter(r => r.LeadFollow === 'Lead').length;
-    const numFollows = this.props.registrations.filter(r => r.LeadFollow === 'Follow').length;
+    const numLeads = this.props.registrations.filter(r => r.LeadFollow === 'lead').length;
+    const numFollows = this.props.registrations.filter(r => r.LeadFollow === 'follow').length;
     const { level } = this.props;
 
     const total = numLeads + numFollows;
@@ -21,7 +21,7 @@ export class LevelGraph extends React.Component {
     };
 
     return (
-      <div>
+      <div className="level-graph">
         <h1>{level}</h1>
         <p>Leads: {numLeads}</p>
         <p>Follows: {numFollows}</p>

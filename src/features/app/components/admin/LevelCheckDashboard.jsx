@@ -10,22 +10,16 @@ export class LevelCheckDashboard extends React.Component {
     super(props);
 
     if (props.registrations) {
-      const apollo = props.registrations.filter(r => r.Level === 'Apollo');
-      const gemini = props.registrations.filter(r => r.Level === 'Gemini');
-      const skylab = props.registrations.filter(r => r.Level === 'Mercury');
-      const spacex = props.registrations.filter(r => r.Level === 'Space-X');
-      const mercury = props.registrations.filter(r => r.Level === 'Mercury');
+      const filteredRegistrations = this.filterRegistrations(props.registrations);
 
       this.state = {
         filteredLeads: {},
         filteredFollows: {},
         filter: '',
         loading: true,
-        apollo,
-        gemini,
-        skylab,
-        spacex,
-        mercury,
+        beginner: filteredRegistrations.beginner,
+        intermediate: filteredRegistrations.intermediate,
+        advanced: filteredRegistrations.advanced,
       };
     } else {
       this.state = {
@@ -33,31 +27,35 @@ export class LevelCheckDashboard extends React.Component {
         filteredFollows: {},
         filter: '',
         loading: true,
-        apollo: [],
-        gemini: [],
-        skylab: [],
-        spacex: [],
-        mercury: [],
+        beginner: [],
+        intermediate: [],
+        advanced: [],
       };
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.registrations) {
-      const apollo = nextProps.registrations.filter(r => r.Level === 'Apollo');
-      const gemini = nextProps.registrations.filter(r => r.Level === 'Gemini');
-      const skylab = nextProps.registrations.filter(r => r.Level === 'Mercury');
-      const spacex = nextProps.registrations.filter(r => r.Level === 'Space-X');
-      const mercury = nextProps.registrations.filter(r => r.Level === 'Mercury');
+      const filteredRegistrations = this.filterRegistrations(nextProps.registrations);
 
       this.setState({
-        apollo,
-        gemini,
-        skylab,
-        spacex,
-        mercury,
+        beginner: filteredRegistrations.beginner,
+        intermediate: filteredRegistrations.intermediate,
+        advanced: filteredRegistrations.advanced,
       });
     }
+  }
+
+  filterRegistrations(registrations) {
+    const beginner = registrations.filter(r => r.Level.level === 'Launching the Blues');
+    const intermediate = registrations.filter(r => r.Level.level === 'Engineering the Blues');
+    const advanced = registrations.filter(r => r.Level.level === 'Exploring the Blues');
+
+    return {
+      beginner,
+      intermediate,
+      advanced,
+    };
   }
 
   render() {
@@ -65,17 +63,15 @@ export class LevelCheckDashboard extends React.Component {
       if (!this.props.loading) {
         return (
           <div className="levels flex-row flex-justify-space-between">
-            <LevelGraph registrations={this.state.mercury} level="Mercury" />
-            <LevelGraph registrations={this.state.gemini} level="Gemini" />
-            <LevelGraph registrations={this.state.apollo} level="Apollo" />
-            <LevelGraph registrations={this.state.skylab} level="Skylab" />
-            <LevelGraph registrations={this.state.spacex} level="Space-X" />
+            <LevelGraph registrations={this.state.beginner} level="Launching" />
+            <LevelGraph registrations={this.state.intermediate} level="Engineering" />
+            <LevelGraph registrations={this.state.advanced} level="Exploring" />
           </div>
         );
       }
     };
     return (
-      <div className="container form-container">
+      <div className="container">
         <h1 className="text-center">Level Dashboard</h1>
         <div className="header-links">
           <Link to="/admin"><button className="btn btn-primary">Back to Admin</button></Link>
