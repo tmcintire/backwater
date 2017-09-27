@@ -161,7 +161,6 @@
 }
 
 .levels {
-  font-size: 0.6em;
   margin-right: 10px;
 
   .level-graph {
@@ -181,6 +180,21 @@
   .level-check-wrapper {
     h1 {
       font-size: 1.5em;
+    }
+  }
+
+  .levels {
+    flex-wrap: wrap;
+
+    .level-graph {
+      width: 100%;
+
+      .graph-container {
+        margin-top: -80px;
+      }
+    }
+    .level-graph:not(:last-child) {
+        border-bottom: 1px solid black;
     }
   }
 }
