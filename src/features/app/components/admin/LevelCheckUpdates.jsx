@@ -11,30 +11,16 @@ export class LevelCheckUpdates extends React.Component {
     super(props);
 
     this.state = {
-      updatedRegistrations: {},
-      pendingRegistrations: {},
+      changedRegistrations: {},
       loading: true,
-      filter: ['Gemini'],
-      title: 'Gemini',
     };
   }
 
   componentWillMount() {
     if (this.props.registrations) {
-      const updatedRegistrations = this.props.registrations.filter(r =>
-        r.LevelChecked === true &&
-        r.BadgeUpdated === true &&
-        r.OriginalLevel === this.state.filter &&
-        r.MissedLevelCheck === false);
-      const pendingRegistrations = this.props.registrations.filter(r =>
-        r.LevelChecked === true &&
-        r.BadgeUpdated === false &&
-        r.OriginalLevel === this.state.filter &&
-        r.MissedLevelCheck === false);
-
+      const changedRegistrations = this.updateChanges(this.props.registrations);
       this.setState({
-        updatedRegistrations,
-        pendingRegistrations,
+        changedRegistrations,
         loading: false,
       });
     }
@@ -42,68 +28,26 @@ export class LevelCheckUpdates extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.registrations) {
-      const updatedRegistrations = nextProps.registrations.filter(r =>
-        r.LevelChecked === true &&
-        r.BadgeUpdated === true &&
-        r.MissedLevelCheck === false &&
-        (r.OriginalLevel === this.state.filter[0] || r.OriginalLevel === this.state.filter[1]));
-      const pendingRegistrations = nextProps.registrations.filter(r =>
-        r.LevelChecked === true &&
-        r.BadgeUpdated === false &&
-        r.MissedLevelCheck === false &&
-        (r.OriginalLevel === this.state.filter[0] || r.OriginalLevel === this.state.filter[1]));
+      const changedRegistrations = this.updateChanges(nextProps.registrations);
 
       this.setState({
-        updatedRegistrations,
-        pendingRegistrations,
+        changedRegistrations,
         loading: false,
       });
     }
   }
 
-  changeFilter = (filter) => {
-    let newFilter = [];
-    if (filter === 'Gemini') {
-      newFilter = ['Gemini'];
-    } else {
-      newFilter = ['Apollo', 'Skylab'];
-    }
-    const updatedRegistrations = this.props.registrations.filter(r =>
-      (r.OriginalLevel === newFilter[0] || r.OriginalLevel === newFilter[1]) &&
-      r.HasLevelCheck === 'Yes' &&
+  updateChanges = (registrations) => {
+    const changedRegistrations = registrations.filter(r =>
       r.LevelChecked === true &&
-      r.BadgeUpdated === true &&
-      r.MissedLevelCheck === false
-    );
+      r.OriginalLevel !== r.Level.name);
 
-    const pendingRegistrations = this.props.registrations.filter(r => {
-      return (
-        (r.OriginalLevel === newFilter[0] || r.OriginalLevel === newFilter[1]) &&
-        r.HasLevelCheck === 'Yes' &&
-        r.LevelChecked === true &&
-        r.BadgeUpdated === false &&
-        r.MissedLevelCheck === false
-      );
-    });
-
-    let title = '';
-    if (filter === 'Apollo') {
-      title = 'Apollo/Skylab';
-    } else if (filter === 'Gemini') {
-      title = 'Gemini';
-    }
-
-    this.setState({
-      updatedRegistrations,
-      pendingRegistrations,
-      filter: newFilter,
-      title,
-    });
-  }
+    return changedRegistrations;
+  };
 
   render() {
-    const renderUpdatedRegistrations = () =>
-      this.state.updatedRegistrations.map((registration, index) => {
+    const renderChangedRegistrations = () =>
+      this.state.changedRegistrations.map((registration, index) => {
         if (registration) {
           return (
             <LevelCheckInfo updated key={index} registration={registration} />
@@ -111,28 +55,9 @@ export class LevelCheckUpdates extends React.Component {
         }
       });
 
-    const renderPendingRegistrations = () =>
-      this.state.pendingRegistrations.map((registration, index) => {
-        if (registration) {
-          return (
-            <LevelCheckInfo updated={false} key={index} registration={registration} />
-          );
-        }
-      });
-
     const renderRegistrations = () => {
       if (this.state.loading === false) {
-        return (
-          <div>
-            <h3 className="text-center">Pending Badge Updates</h3>
-            <hr />
-            {renderPendingRegistrations()}
-
-            <h3 className="text-center">Updated Badges</h3>
-            <hr />
-            {renderUpdatedRegistrations()}
-          </div>
-        );
+        return renderChangedRegistrations();
       }
       return (
         <Loading />
@@ -141,11 +66,14 @@ export class LevelCheckUpdates extends React.Component {
 
     return (
       <div className="container form-container">
-          <div className="level-check-filters">
-            <span onClick={() => this.changeFilter('Gemini')}>Gemini</span>
-            <span onClick={() => this.changeFilter('Apollo')}>Apollo/Skylab</span>
-          </div>
-        <h1 className="text-center">{this.state.title}</h1>
+        <h3 className="text-center">Registration Updates</h3>
+        <div>
+          <span className="col-xs-1">ID</span>
+          <span className="col-xs-2">First Name</span>
+          <span className="col-xs-3">Last Name</span>
+          <span className="col-xs-3">Original Level</span>
+          <span className="col-xs-3">New Level</span>
+        </div>
         {renderRegistrations()}
       </div>
     );

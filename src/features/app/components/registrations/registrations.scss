@@ -16,16 +16,9 @@ input[type='checkbox'] {
     border-radius:5px;
     border:2px solid #555;
 }
+
 input[type='checkbox']:checked {
     background: #8e7155;
-}
-
-.comp-container {
-  width: 350px;
-}
-
-.level-container {
-  width: 260px;
 }
 
 .ad-nov-role {
@@ -103,4 +96,12 @@ input[type='checkbox']:checked {
 
 .comp-select {
   width: 50%;
+}
+
+@media (max-width: 500px) {
+  input[type='checkbox'] {
+      width:15px;
+      height:15px;
+      border:1px solid #555;
+  }
 }

@@ -1,13 +1,8 @@
-$navbackground: rgba(25, 52, 66, 1);
+$navbackground: #352a1f;
 $hoverlink: rgba(25, 52, 66, 0.5);
 
 .nav-title {
-  .balast {
-    color: white;
-  }
-  .off {
-    color: #8e7155;
-  }
+  color: #ab9a81!important;
 }
 
 .navbar {
@@ -103,6 +98,10 @@ $hoverlink: rgba(25, 52, 66, 0.5);
   .navbar {
     font-size: 0.7em;
     font-weight: normal;
+
+    .navbar-brand {
+      font-size: 1.5em;
+    }
   }
 }
 

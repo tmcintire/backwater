@@ -15,16 +15,6 @@ export function registrationsReceived(registrations) {
   };
 }
 
-export function partnersReceived(partners) {
-  return function (dispatch) { // eslint-disable-line
-    dispatch({ type: 'START_FETCHING_PARTNERS' });
-    dispatch({
-      type: 'RECEIVED_PARTNERS',
-      partners,
-    });
-  };
-}
-
 export function tracksReceived(tracks) {
   return function (dispatch) { // eslint-disable-line
     dispatch({ type: 'START_FETCHING_TRACKS' });
@@ -51,16 +41,6 @@ export function moneyLogReceived(log) {
     dispatch({
       type: 'RECEIVED_MONEY_LOG',
       log,
-    });
-  };
-}
-
-export function updateAmateurComp(bookingID, amateur, amateurPartner) {
-  return function (dispatch) { // eslint-disable-line
-    dispatch({
-      type: 'UPDATED_AMATEUR_COMP',
-      amateur,
-      amateurPartner,
     });
   };
 }

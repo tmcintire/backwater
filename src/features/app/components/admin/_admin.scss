@@ -26,12 +26,11 @@
 .level-check-form {
   width: 100%;
   margin-bottom: 30px;
-  font-size: 2em;
+  font-size: 1.5em;
   align-items: center;
 
   .level-check-dropdown {
     width: 100%;
-    height: 50px;
     font-size: 0.7em;
   }
 
@@ -51,11 +50,6 @@
 
 .level-check-info {
   width: 100%;
-  font-size: 1.5em;
-
-  span {
-    width: 25%;
-  }
 }
 
 .header-links {
@@ -66,7 +60,7 @@
 
 .level-check-container {
   .leads-container, .follows-container {
-    width: 45%;
+    width: 100%;
   }
 }
 
@@ -160,4 +154,18 @@
 .graph-container {
   height: 250px;
   align-items: flex-end;
+}
+
+.level-check-wrapper {
+  font-size: 0.8em;
+}
+
+@media (max-width: 500px) {
+  .level-check-filters {
+    margin: 0;
+    display: flex;
+    color: #8e7155;
+    justify-content: space-between;
+    font-size: 1em;
+  }
 }

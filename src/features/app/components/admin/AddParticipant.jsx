@@ -33,18 +33,13 @@ export class AddParticipant extends React.Component {
       });
       return;
     }
-    const level = this.Level.value;
-    let levelCheck = 'No';
-    if (level === 'Gemini' || level === 'Apollo' || level === 'Skylab') {
-      levelCheck = 'Yes';
-    }
-    const amount = this.HasPaid.checked ? '0.00' : this.state.price;
+    const amount = this.HasPaid.checked ? this.state.price : '0.00';
     api.updateTotalCollected(parseInt(amount, 10));
 
     const moneyLog = {
       bookingId: this.BookingID.value,
       amount: this.state.price,
-      reason: `Fully Paid - New registration - ${this.Level.value}`,
+      reason: `New registration - ${this.Level.value}`,
     };
     api.updateMoneyLog(moneyLog);
 
@@ -52,20 +47,19 @@ export class AddParticipant extends React.Component {
       'First Name': this['First Name'].value,
       BookingID: this.BookingID.value,
       'Last Name': this['Last Name'].value,
-      Level: this.Level.value,
+      Level: _.filter(this.props.tracks, t => t.name === this.Level.value)[0],
+      HasLevelCheck: this.Level.value === 'Advanced',
       HasPaid: this.HasPaid.checked,
       Open: 'No',
-      'Amateur Couples': 'No',
       AdNov: 'No',
-      HasLevelCheck: levelCheck,
-      'Amount Owed': amount,
+      'Amount Owed': this.HasPaid.checked ? '0.00' : this.state.price,
       'Original Amount Owed': this.state.price,
       CheckedIn: false,
       WalkIn: true,
     };
 
     if (this.HasPaid.checked) {
-      const newTotal = parseInt(this.state.price, 10) + parseInt(this.props.totalCollected, 10);
+      const newTotal = this.state.price;
       api.updateTotalCollected(newTotal);
     }
 
@@ -83,15 +77,9 @@ export class AddParticipant extends React.Component {
     this.BookingID = this.BookingID + 1;
   }
 
-  lookupPrice = (level, prices) => {
-    return _.filter(prices, (p, index) => {
-      return index === level;
-    })[0].price;
-  }
-
   handleLevelChange = (e) => {
-    const level = e.target.value;
-    const price = this.lookupPrice(level, this.props.prices);
+    const level = _.filter(this.props.tracks, t => t.name === e.target.value);
+    const price = level[0].price;
 
     this.setState({
       price,
@@ -106,8 +94,8 @@ export class AddParticipant extends React.Component {
 
   createSelectItems() {
     let items = [];
-    _.forIn(this.props.prices, (p, index) => {
-      items.push(<option key={index} value={index}>{p.label}</option>);
+    _.forIn(this.props.tracks, (t, index) => {
+      items.push(<option key={index} value={t.name}>{t.name}</option>);
     });
     return items;
   }
@@ -145,6 +133,7 @@ export class AddParticipant extends React.Component {
                   <input className="form-control" type="text" ref={(ref) => { this['Last Name'] = ref; }} />
                   <label htmlFor="type">Level</label>
                   <select className="form-control" onChange={e => this.handleLevelChange(e)} ref={(ref) => { this.Level = ref; }} >
+                    <option value=""></option>
                     {this.createSelectItems()}
                   </select>
 

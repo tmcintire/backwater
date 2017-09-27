@@ -46,9 +46,7 @@ export class Nav extends React.Component {
               <span className="icon-bar" />
             </button>
             <li className="navbar-brand nav-title" href="#">
-              <span className="balast">BALAST</span>
-              <span className="off">OFF! </span>
-              <span>Check-In</span>
+              <span>Backwater Blues Checkin</span>
             </li>
           </div>
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -60,11 +58,6 @@ export class Nav extends React.Component {
             <ul className="nav navbar-nav">
               <li>
                 <Link onClick={this.closeMenu} to="/addparticipant" className="link" activeClassName="active" activeStyle={activeStyles}>Add</Link>
-              </li>
-            </ul>
-            <ul className="nav navbar-nav">
-              <li>
-                <Link onClick={this.closeMenu} to="/instructions" className="link" activeClassName="active" activeStyle={activeStyles}>Instructions</Link>
               </li>
             </ul>
             <ul className="nav navbar-nav navbar-right">

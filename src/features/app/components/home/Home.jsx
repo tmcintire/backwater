@@ -18,8 +18,9 @@ export class Home extends React.Component {
   componentWillReceiveProps(nextProps) {
     const registrations = this.state.filterText !== '' ? this.state.filteredRegistrations : nextProps.registrations;
     if (registrations) {
+      const sortedRegistrations = helpers.sortRegistrations(registrations, 'Last Name');
       this.setState({
-        filteredRegistrations: registrations,
+        filteredRegistrations: sortedRegistrations,
       });
     }
   }
@@ -44,7 +45,8 @@ export class Home extends React.Component {
         return (
           _.includes(reg['First Name'].toLowerCase(), target.toLowerCase()) ||
           _.includes(reg['Last Name'].toLowerCase(), target.toLowerCase()) ||
-          _.includes(reg.Level.toLowerCase(), target.toLowerCase()) ||
+          _.includes(reg.Level.level.toLowerCase(), target.toLowerCase()) ||
+          _.includes(reg.Level.name.toLowerCase(), target.toLowerCase()) ||
           _.isEqual(reg.BookingID, target)
         );
       }
@@ -78,21 +80,6 @@ export class Home extends React.Component {
 
     if (checked) {
       filteredRegistrations = registrations.filter(reg => reg.CheckedIn === false);
-    } else {
-      filteredRegistrations = registrations;
-    }
-    this.setState({
-      filteredRegistrations,
-    });
-  }
-
-  toggleGear(e) {
-    const checked = e.target.checked;
-    const { registrations } = this.props;
-    let filteredRegistrations = [];
-
-    if (checked) {
-      filteredRegistrations = registrations.filter(reg => reg.HasGear === 'Yes');
     } else {
       filteredRegistrations = registrations;
     }
@@ -148,10 +135,6 @@ export class Home extends React.Component {
             <span>Show not checked in</span>
             <input className="no-outline" type="checkbox" onChange={e => this.toggleNotChecked(e)} />
           </div>
-          <div className="flex-row option">
-            <span>Show only gear</span>
-            <input className="no-outline" type="checkbox" onChange={e => this.toggleGear(e)} />
-          </div>
         </div>
         <div className="flex-row flex-justify-space-between">
           <div>
@@ -165,14 +148,10 @@ export class Home extends React.Component {
         </div>
         <div className="registrations-wrapper flex-col">
           <div className="registrations-header">
-            <span className="col-xs-1" onClick={e => this.filterRegistrations(e, 'BookingID')}>ID</span>
-            <span className="col-xs-2" onClick={e => this.filterRegistrations(e, 'Last Name')}>Last Name</span>
-            <span className="col-xs-2" onClick={e => this.filterRegistrations(e, 'First Name')}>First Name</span>
-            <span className="col-xs-2" onClick={e => this.filterRegistrations(e, 'Level')}>Track</span>
-            <span className="col-xs-1" onClick={e => this.filterRegistrations(e, 'HasLevelCheck')}>Level Check</span>
-            <span className="col-xs-1">Amount Owed</span>
-            <span className="col-xs-1">Gear</span>
-            <span className="col-xs-1">Fully Paid</span>
+            <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'Last Name')}>Last Name</span>
+            <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'First Name')}>First Name</span>
+            <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'Level')}>Track</span>
+            <span className="col-xs-2">Amount Owed</span>
             <span className="col-xs-1">Checked In</span>
           </div>
           <div className="registrations-body flex-col">

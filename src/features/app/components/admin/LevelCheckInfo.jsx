@@ -4,11 +4,11 @@ import * as api from '../../../data/api';
 export class LevelCheckInfo extends React.Component {
   handleUpdate = (id) => {
     api.updateRegistration(id, {
-      BadgeUpdated: this.badgeUpdatedCheckbox.checked,
-    })
+      LevelUpdated: !this.props.registration.LevelUpdated,
+    });
   }
   checkUpdated = () => {
-    if (this.props.updated) {
+    if (this.props.registration.LevelUpdated) {
       return 'updated-badges';
     }
   }
@@ -16,17 +16,12 @@ export class LevelCheckInfo extends React.Component {
   render() {
     const { registration } = this.props;
     return (
-      <div className={`container level-check-info ${this.checkUpdated()} flex-row`}>
-        <span>{registration.BookingID}</span>
-        <span>{registration['First Name']}</span>
-        <span>{registration['Last Name']}</span>
-        <span>{registration.Level}</span>
-        <input
-          type="checkbox"
-          checked={registration.BadgeUpdated}
-          ref={(ref) => { this.badgeUpdatedCheckbox = ref; }}
-          onChange={() => this.handleUpdate(registration.BookingID)}
-        />
+      <div onClick={() => this.handleUpdate(registration.BookingID)} className={`level-check-info ${this.checkUpdated()} flex-row`}>
+        <span className="col-xs-1">{registration.BookingID}</span>
+        <span className="col-xs-2">{registration['First Name']}</span>
+        <span className="col-xs-3">{registration['Last Name']}</span>
+        <span className="col-xs-3" >{registration.OriginalLevel}</span>
+        <span className="col-xs-3">{registration.Level.name}</span>
       </div>
     );
   }

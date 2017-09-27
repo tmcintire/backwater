@@ -23,23 +23,10 @@ export class RegistrationBox extends React.Component {
       (registration.TShirts || registration.AdditionalTShirts || registration['Limited Edition Patch']) ? 'Yes' : 'No';
     return (
       <Link className="registration-box-link" to={`editregistration/${registration.BookingID}`}>
-        <span className="col-xs-1">
-          {registration.BookingID}
-        </span>
-        <span className="col-xs-2">{registration['Last Name']}</span>
-        <span className="col-xs-2">{registration['First Name']}</span>
-        <span className="col-xs-2">{registration.Level}</span>
-        <span className="col-xs-1">{registration.HasLevelCheck}</span>
-        <span className="col-xs-1" style={style}>${registration['Amount Owed']}</span>
-        <span className="col-xs-1">{hasMerchandise}</span>
-        <span className="col-xs-1 text-center">
-          <input
-            className="no-outline"
-            disabled
-            checked={registration.HasPaid}
-            type="checkbox"
-          />
-        </span>
+        <span className="col-xs-3">{registration['Last Name']}</span>
+        <span className="col-xs-3">{registration['First Name']}</span>
+        <span className="col-xs-3">{registration.Level.level}</span>
+        <span className="col-xs-2" style={style}>${registration['Amount Owed']}</span>
         <span className="col-xs-1 checkin-background text-center">
           <input
             disabled

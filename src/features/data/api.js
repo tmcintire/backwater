@@ -11,96 +11,116 @@ let rawData;
 let lastBookingId = 0;
 
 const regRef = firebaseRef.child('registrations');
-const development = false;
+const development = true;
 
 if (development === true) {
   axios({
     method: 'get',
-    url: 'https://cors-anywhere.herokuapp.com/http://balastoff.dancecamps.org/api.php?token=aa8cb508a33d&format=json&report=registration',
+    url: 'https://cors-anywhere.herokuapp.com/http://backwaterblues.dancecamps.org/api.php?token=4667dcac55ca&format=json&report=checkinData',
     headers: { 'X-Requested-With': 'XMLHttpRequest' },
   }).then((response) => {
     headers = response.data.header;
     rawData = response.data.data;
+    let tracks = [];
 
+    // 0:"BookingID",
+    // 1:"Amount Owed",
+    // 2:"First Name",
+    // 3:"Last Name",
+    // 4:"LeadFollow",
+    // 5:"Level",
+    // 6:"TicketType"
     const object = {};
     _.forEach(rawData, (data) => {
       // console.log("************");
-      object[data[1]] = {};
+      object[data[0]] = {};
       _.forEach(headers, (header, headerIndex) => {
         // console.log("Header", header);
         // console.log("Data", data[headerIndex]);
-        object[data[1]][header] = data[headerIndex];
-        object[data[1]].CheckedIn = false;
-        object[data[1]].HasComments = false;
-        object[data[1]].Shirt1 = false;
-        object[data[1]].Shirt2 = false;
-        object[data[1]].Patch = false;
-        object[data[1]].LevelChecked = false;
-        object[data[1]].BadgeUpdated = false;
-        object[data[1]].MissedLevelCheck = false;
-        object[data[1]].MissionGearIssues = [];
-        object[data[1]].Comments = [];
-        object[data[1]]['Original Amount Owed'] = data[5];
-        object[data[1]].OriginalLevel = data[16];
-        object[data[1]].WalkIn = false;
+        object[data[0]][header] = data[headerIndex];
+        object[data[0]].CheckedIn = false;
+        object[data[0]].HasComments = false;
+        object[data[0]]['Original Amount Owed'] = data[1];
+        object[data[0]].WalkIn = false;
+        object[data[0]].Open = 'No';
+        object[data[0]].OriginalLevel = data[5];
+        object[data[0]].LevelUpdated = false;
+
+        // Handle level checks
+        object[data[0]].HasLevelCheck = false;
+        object[data[0]].LevelChecked = false;
+        if (data[5] === 'Advanced' || data[5] === 'Intermediate') {
+          object[data[0]].HasLevelCheck = true;
+        }
+
+        let level;
+        switch (data[5]) {
+          case 'Beginner':
+            level = 'Launching the Blues';
+            break;
+          case 'Intermediate':
+            level = 'Engineering the Blues';
+            break;
+          case 'Advanced':
+            level = 'Exploring the Blues';
+            break;
+          case 'DancePass':
+            level = 'Dance Pass';
+            break;
+          default:
+            return;
+        }
+
+        object[data[0]].Level = {
+          name: data[5],
+          level,
+        };
+
+        // Create the levels in the database
+        if (!_.some(tracks, t => t.name === data[5])) {
+          let price;
+          let sortBy;
+          switch (data[5]) {
+            case 'Beginner':
+              price = '65.00';
+              sortBy = 1;
+              level = 'Launching the Blues';
+              break;
+            case 'Intermediate':
+              price = '130.00';
+              sortBy = 2;
+              level = 'Engineering the Blues';
+              break;
+            case 'Advanced':
+              price = '130.00';
+              sortBy = 3;
+              level = 'Exploring the Blues';
+              break;
+            case 'DancePass':
+              price = '35.00';
+              sortBy = 4;
+              level = 'Dance Pass';
+              break;
+            default:
+              return;
+          }
+          tracks.push({
+            name: data[5],
+            price,
+            sortBy,
+            level,
+          });
+        }
 
         // Handle Paid entries
-        if (data[5] === '0.00') {
-          object[data[1]].HasPaid = true;
+        if (data[1] === '0.00') {
+          object[data[0]].HasPaid = true;
         } else {
-          object[data[1]].HasPaid = false;
+          object[data[0]].HasPaid = false;
         }
-
-        // Handle Level Check
-        if (data[16] === 'Gemini' || data[16] === 'Apollo' || data[16] === 'Skylab') {
-          object[data[1]].HasLevelCheck = 'Yes';
-        } else {
-          object[data[1]].HasLevelCheck = 'No';
-        }
-
-        // check for gear
-        object[data[1]].HasGear = (data[40] || data[42] || data[44]) ? 'Yes' : 'No';
       });
     });
-
-    // Setup partners
-    _.forEach(object, (r) => {
-      if (r) {
-        let registrationToUpdate = [];
-        let first;
-        let last;
-        if (r.Open === 'Yes' && r.Partner !== '') {
-          first = r.Partner.split(' ')[0].toLowerCase() || 'TBD';
-          last = r.Partner.split(' ')[1].toLowerCase() || 'TBD';
-          registrationToUpdate = _.find(object, reg =>
-            reg['First Name'].toLowerCase() === first && reg['Last Name'].toLowerCase() === last);
-
-          if (!_.isEmpty(registrationToUpdate)) {
-            registrationToUpdate.Open = 'Yes';
-            registrationToUpdate.Partner = `${r['First Name']} ${r['Last Name']}`;
-          }
-        }
-        if (r['Amateur Couples'] === 'Yes' && r['Amateur Partner'] !== '') {
-          first = r['Amateur Partner'].split(' ')[0];
-          last = r['Amateur Partner'].split(' ')[1];
-          registrationToUpdate = _.find(object, (reg) => {
-            if (!first) {
-              first = 'TBD';
-            }
-            if (!last) {
-              last = 'TBD';
-            }
-            return reg['First Name'].toLowerCase() === first.toLowerCase() && reg['Last Name'].toLowerCase() === last.toLowerCase();
-          });
-
-          if (!_.isEmpty(registrationToUpdate)) {
-            registrationToUpdate['Amateur Couples'] = 'Yes';
-            registrationToUpdate['Amateur Partner'] = `${r['First Name']} ${r['Last Name']}`;
-          }
-        }
-      }
-    });
-
+    firebaseRef.child('Tracks').set(tracks);
     regRef.set(object);
   }).catch((error) => {
     console.log(error);
@@ -128,42 +148,6 @@ export function fetchRegistrations() {
     // const sortedRegistrations = helpers.sortRegistrations(registrations);
     store.dispatch(actions.registrationsReceived(registrations));
   });
-}
-
-function getPartners(registrations) {
-  const updatedRegistrations = [];
-  _.forEach(registrations, (r) => {
-    if (r) {
-      const first = r.Partner.split(' ')[0];
-      const last = r.Partner.split(' ')[1];
-
-      if (r.Open && r.Partner) {
-        const registrationToUpdate = registrations.filter((reg) => {
-          return reg['First Name'] === first && reg['Last Name'] === last;
-        });
-
-        registrationToUpdate.Open = 'Yes';
-        registrationToUpdate.Partner = `${r['First Name']} ${r['Last Name']}`;
-      }
-      if (r['Amateur Couples'] && r['Amateur Partner']) {
-        const registrationToUpdate = registrations.filter((reg) => {
-          return reg['First Name'] === first && reg['Last Name'] === last;
-        });
-
-        const update = {
-          'Amateur Couples': 'Yes',
-          'Amateur Partner': `${r['First Name']} ${r['Last Name']}`,
-        };
-
-        if (registrationToUpdate.length !== 0) {
-          updateRegistration(registrationToUpdate[0].BookingID, update);
-        }
-      }
-
-      updatedRegistrations.push(registrationToUpdate);
-    }
-  });
-  store.dispatch(actions.partnersReceived(partners));
 }
 
 export function fetchTracks() {

@@ -37,10 +37,8 @@ const adminUserRoutes = () => (
     <Route path="/admin/levelcheckupdates" component={LevelCheckUpdatesContainer} />
     <Route path="/admin/moneylog" component={MoneyLogContainer} />
     <Route path="/admin/levelcheckdashboard" component={LevelCheckDashboardContainer} />
-    <Route path="/admin/missedlevelcheck" component={MissedLevelCheckContainer} />
     <Route path="/editregistration/:id" component={EditRegistrationContainer} />
     <Route path="/comps" component={CompRegistrationsContainer} />
-    <Route path="/admin/missiongearissues" component={MissionGearIssuesContainer} />
     <Route path="/instructions" component={Instructions} />
   </Route>
 );

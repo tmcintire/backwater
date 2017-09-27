@@ -1,30 +1,41 @@
+import _ from 'lodash';
 import React from 'react';
 import { Link } from 'react-router';
 import * as api from '../../../data/api';
+import * as helpers from '../../../data/helpers';
 
 const Loading = require('react-loading-animation');
 
 export class EditParticipant extends React.Component {
-  handleValueChange = (e) => {
-    e.preventDefault();
-    this.setState({
-      track: e.target.value,
-    });
+  handleLevelChange = (e) => {
+    if (e.target.value === 'Advanced') {
+      this.HasLevelCheck.value === true;
+    }
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
 
+    const level = _.filter(this.props.tracks.tracks, t => t.level === this.Level.value);
     const object = {
-      Level: this.Level.value,
-      HasLevelCheck: this.HasLevelCheck.value,
+      Level: level[0],
       LeadFollow: this.LeadFollow.value,
       'Amount Owed': this.AmountOwed.value,
       HasPaid: this.HasPaid.value === 'true',
+      HasLevelCheck: this.HasLevelCheck.value,
     };
 
     api.updateRegistration(this.props.params.id, object);
     window.location = ('#/admin');
+  }
+
+  createSelectItems() {
+    let items = [];
+    let tracks = helpers.sortTracks(this.props.tracks.tracks);
+    _.forEach(tracks, (t, index) => {
+      items.push(<option key={index} value={t.level}>{t.level}</option>);
+    });
+    return items;
   }
 
   render() {
@@ -50,21 +61,13 @@ export class EditParticipant extends React.Component {
               <div className="form-group">
                 <form>
                   <label htmlFor="type">Track</label>
-                  <select className="form-control" id="type" defaultValue={participant.Level} ref={(ref) => { this.Level = ref; }}>
-                    <option value="DancePass">Dance Pass</option>
-                    <option value="Staff">Staff</option>
-                    <option value="Other">Other</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Mercury">Mercury</option>
-                    <option value="Gemini">Gemini</option>
-                    <option value="Apollo">Apollo</option>
-                    <option value="Skylab">Skylab</option>
-                    <option value="Space-X">Space-X</option>
+                  <select className="form-control" id="type" onChange={this.handle} defaultValue={participant.Level.level} ref={(ref) => { this.Level = ref; }}>
+                    {this.createSelectItems()}
                   </select>
                   <label htmlFor="type">Has Level Check</label>
                   <select className="form-control" defaultValue={participant.HasLevelCheck} ref={(ref) => { this.HasLevelCheck = ref; }} >
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
                   </select>
                   <label htmlFor="type">Lead/Follow</label>
                   <select className="form-control" defaultValue={participant.LeadFollow} ref={(ref) => { this.LeadFollow = ref; }} >

@@ -13,123 +13,84 @@ export class LevelCheck extends React.Component {
     this.state = {
       filteredLeads: {},
       filteredFollows: {},
-      geminiFilter: ['Gemini'],
-      apolloSkylabFilter: ['Apollo', 'Skylab'],
-      mercuryFilter: ['Mercury'],
-      currentFilter: ['Gemini'],
+      intermediateFilter: ['Intermediate'],
+      advancedFilter: ['Advanced'],
+      currentFilter: ['Intermediate'],
+      showLeads: true,
       loading: true,
     };
   }
 
   componentWillMount() {
     if (this.props.registrations) {
-      const filteredLeads = this.props.registrations.filter(r =>
-        r.HasLevelCheck === 'Yes' &&
-        r.LeadFollow === 'Lead' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false &&
-        _.includes(this.state.currentFilter, r.OriginalLevel));
-      const filteredFollows = this.props.registrations.filter(r =>
-        r.HasLevelCheck === 'Yes' &&
-        r.LeadFollow === 'Follow' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false &&
-        _.includes(this.state.currentFilter, r.OriginalLevel));
-      this.setState({
-        filteredLeads,
-        filteredFollows,
-        loading: false,
+      this.getFilters(this.props.registrations, this.state.currentFilter).then((filters) => {
+        this.setState({
+          filteredLeads: filters.filteredLeads,
+          filteredFollows: filters.filteredFollows,
+          loading: false,
+        });
       });
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.registrations) {
-      const filteredLeads = nextProps.registrations.filter(r =>
-        r.HasLevelCheck === 'Yes' &&
-        r.LeadFollow === 'Lead' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false &&
-        _.includes(this.state.currentFilter, r.OriginalLevel));
-      const filteredFollows = nextProps.registrations.filter(r =>
-        r.HasLevelCheck === 'Yes' &&
-        r.LeadFollow === 'Follow' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false &&
-        _.includes(this.state.currentFilter, r.OriginalLevel));
-      this.setState({
-        filteredLeads,
-        filteredFollows,
-        loading: false,
+      this.getFilters(nextProps.registrations, this.state.currentFilter).then((filters) => {
+        this.setState({
+          filteredLeads: filters.filteredLeads,
+          filteredFollows: filters.filteredFollows,
+          loading: false,
+        });
       });
     }
   }
 
-  changeFilter = (filter) => {
-    const filteredLeads = this.props.registrations.filter(r => {
-      return (
-        _.includes(filter, r.OriginalLevel) &&
-        r.LeadFollow === 'Lead' &&
-        r.HasLevelCheck === 'Yes' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false
-      );
-    });
+  getFilters = (registrations, filter) => new Promise((resolve) => {
+    const filteredLeads = registrations.filter(r =>
+      r.HasLevelCheck === true &&
+      r.LeadFollow === 'lead' &&
+      r.LevelChecked === false &&
+      _.includes(filter, r.OriginalLevel));
+    const filteredFollows = registrations.filter(r =>
+      r.HasLevelCheck === true &&
+      r.LeadFollow === 'follow' &&
+      r.LevelChecked === false &&
+      _.includes(filter, r.OriginalLevel));
 
-    const filteredFollows = this.props.registrations.filter(r => {
-      return (
-        _.includes(filter, r.OriginalLevel) &&
-        r.LeadFollow === 'Follow' &&
-        r.HasLevelCheck === 'Yes' &&
-        r.LevelChecked === false &&
-        r.MissedLevelCheck === false
-      );
-    });
-
-    this.setState({
+    resolve({
       filteredLeads,
       filteredFollows,
-      currentFilter: filter,
+    });
+  });
+
+  // Sets the filter for which registrations to show
+  changeFilter = (filter) => {
+    this.getFilters(this.props.registrations, filter).then((filters) => {
+      this.setState({
+        filteredLeads: filters.filteredLeads,
+        filteredFollows: filters.filteredFollows,
+        currentFilter: filter,
+      });
     });
   }
 
-  handleValueChange = (e) => {
-    e.preventDefault();
-    const target = e.target.value;
-    const { registrations } = this.props;
-
-    let filteredLeads = registrations.filter(reg => {
-      if (reg) {
-        return (
-          _.isEqual(reg.BookingID, target)
-        );
-      }
-    });
-
-    let filteredFollows = registrations.filter(reg => {
-      if (reg) {
-        return (
-          _.isEqual(reg.BookingID, target)
-        );
-      }
-    });
-
-    if (target === '') {
-      filteredRegistrations = registrations;
-    }
-
+  toggleLeadFollow = () => {
     this.setState({
-      filteredRegistrations,
+      showLeads: !this.state.showLeads,
     });
   }
 
   render() {
     const renderLeads = () => {
-      if (Object.keys(this.state.loading === false && this.state.filteredLeads).length > 0) {
+      if (this.state.loading === false && this.state.filteredLeads.length > 0) {
         return this.state.filteredLeads.map((registration) => {
           if (registration) {
             return (
-              <LevelCheckBox key={registration.BookingID} registration={registration} />
+              <LevelCheckBox
+                key={registration.BookingID}
+                registration={registration}
+                tracks={this.props.tracks}
+              />
             );
           }
         });
@@ -139,11 +100,15 @@ export class LevelCheck extends React.Component {
       );
     };
     const renderFollows = () => {
-      if (Object.keys(this.state.loading === false && this.state.filteredFollows).length > 0) {
+      if (this.state.loading === false && this.state.filteredFollows.length > 0) {
         return this.state.filteredFollows.map((registration) => {
           if (registration) {
             return (
-              <LevelCheckBox key={registration.BookingID} registration={registration} />
+              <LevelCheckBox
+                key={registration.BookingID}
+                registration={registration}
+                tracks={this.props.tracks}
+              />
             );
           }
         });
@@ -153,23 +118,24 @@ export class LevelCheck extends React.Component {
       );
     };
     return (
-      <div className="container form-container">
+      <div className="level-check-wrapper container form-container">
         <h1 className="text-center">Level Check</h1>
         <div className="header-links">
           <Link to="/admin"><button className="btn btn-primary">Back to Admin</button></Link>
           <Link to="/admin/levelcheckupdates">View Completed Level Checks</Link>
         </div>
         <div className="level-check-filters">
-          <span onClick={() => this.changeFilter(this.state.geminiFilter)}>Gemini</span>
-          <span onClick={() => this.changeFilter(this.state.apolloSkylabFilter)}>Apollo/Skylab</span>
+          <span onClick={() => this.toggleLeadFollow()}>Toggle Lead/Follow</span>
+          <span onClick={() => this.changeFilter(this.state.intermediateFilter)}>Intermediate</span>
+          <span onClick={() => this.changeFilter(this.state.advancedFilter)}>Advanced</span>
         </div>
         <hr />
         <div className="level-check-container flex-row flex-justify-space-between">
-          <div className="leads-container">
+          <div className={`leads-container ${!this.state.showLeads ? 'hidden' : ''}`}>
             <h3 className="text-center">Leads</h3>
             {renderLeads()}
           </div>
-          <div className="follows-container">
+          <div className={`follows-container ${this.state.showLeads ? 'hidden' : ''}`}>
             <h3 className="text-center">Follows</h3>
             {renderFollows()}
           </div>

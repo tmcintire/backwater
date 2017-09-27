@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { LevelCheck } from './LevelCheck';
 
 const mapStateToProps = state => ({
-  tracks: state.data.tracks,
+  tracks: state.data.tracks.tracks,
   registrations: state.data.registrations.registrations,
   loading: state.data.registrations.loading,
 });

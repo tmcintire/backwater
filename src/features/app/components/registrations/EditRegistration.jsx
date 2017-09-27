@@ -4,11 +4,7 @@ import { Link } from 'react-router';
 import * as api from '../../../data/api';
 
 import { Comps } from './Comps';
-import { MissionGear } from './MissionGear';
-import { Level } from './Level';
-import { Comments } from './Comments';
 import { Payment } from './Payment';
-import { EditMissionGearIssues } from './EditMissionGearIssues';
 
 const Loading = require('react-loading-animation');
 
@@ -38,6 +34,7 @@ export class EditRegistration extends React.Component {
         comps,
         loading,
         showSaved: false,
+        moneyLogComment: 'Paid off amount due on registration',
       };
     } else {
       this.state = {
@@ -110,7 +107,7 @@ export class EditRegistration extends React.Component {
       const moneyLog = {
         bookingId: this.state.registration.BookingID,
         amount,
-        reason: 'Paid off amount due on registration form',
+        reason: this.state.moneyLogComment,
       };
       api.updateMoneyLog(moneyLog);
 
@@ -128,19 +125,10 @@ export class EditRegistration extends React.Component {
     window.location('/');
   }
 
-  toggleResolved = (e, id, index) => {
-    const issue = this.state.registration.MissionGearIssues[index];
-    const object = {
-      MissionGearIssues: {
-        [index]: {
-          Issue: issue.Issue,
-          Resolved: !issue.Resolved,
-        },
-      },
-    };
-
-    api.updateRegistration(id, object);
-    this.saved();
+  updateMoneyLogComment = (comment) => {
+    this.setState({
+      moneyLogComment: comment,
+    });
   }
 
   saved = () => {
@@ -174,18 +162,13 @@ export class EditRegistration extends React.Component {
 
           <hr />
           <div className="flex-row flex-wrap flex-justify-space-between">
-            <Level
-              saved={this.saved}
-              id={this.props.params.id}
-              level={registration.Level}
-              hasLevelCheck={registration.HasLevelCheck}
-            />
+            <span className="full-width"><strong>Level: </strong>{registration.Level.level} </span>
             <Comps
               comps={comps}
-              partner={partner}
               saved={this.saved}
               id={this.props.params.id}
               registration={registration}
+              updateMoneyLogComment={this.updateMoneyLogComment}
             />
             <Payment
               saved={this.saved}
@@ -194,27 +177,6 @@ export class EditRegistration extends React.Component {
               togglePaid={this.changePaidCheckBox}
             />
           </div>
-
-          <hr />
-          <div className="flex-row flex-wrap flex-justify-space-between">
-            <MissionGear
-              saved={this.saved}
-              id={this.props.params.id}
-              registration={registration}
-            />
-            <EditMissionGearIssues
-              saved={this.saved}
-              id={this.props.params.id}
-              issues={registration.MissionGearIssues}
-              toggleResolved={this.toggleResolved}
-            />
-            <Comments
-              saved={this.saved}
-              id={this.props.params.id}
-              registration={registration}
-            />
-          </div>
-
         </div>
       );
     };
@@ -231,6 +193,5 @@ EditRegistration.propTypes = {
   params: {
     id: React.PropTypes.string,
   },
-  totalCollected: React.PropTypes.number,
-  partners: React.PropTypes.array,
+  totalCollected: React.PropTypes.number
 };

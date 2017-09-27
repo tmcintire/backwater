@@ -1,5 +1,7 @@
 import React from 'react';
 import * as api from '../../../data/api';
+import * as helpers from '../../../data/helpers';
+import _ from 'lodash';
 
 export class LevelCheckBox extends React.Component {
   constructor(props) {
@@ -32,17 +34,7 @@ export class LevelCheckBox extends React.Component {
       api.updateRegistration(this.props.registration.BookingID, {
         LevelChecked: true,
         MissedLevelCheck: false,
-        Level: this.state.level,
-      });
-    }
-  }
-
-  missedLevelCheck = () => {
-    const confirm = window.confirm(`Mark number ${this.props.registration.BookingID} as "Missed Level Check"?`);
-
-    if (confirm === true) {
-      api.updateRegistration(this.props.registration.BookingID, {
-        MissedLevelCheck: true,
+        Level: _.filter(this.props.tracks, t => t.name === this.state.level)[0],
       });
     }
   }
@@ -51,6 +43,17 @@ export class LevelCheckBox extends React.Component {
     this.setState({
       highlighted: !this.state.highlighted,
     });
+  }
+
+  createSelectItems() {
+    let items = [];
+    if (this.props.tracks) {
+      let tracks = helpers.sortTracks(this.props.tracks);
+      _.forIn(tracks, (t, index) => {
+        items.push(<option key={index} value={t.name}>{t.name}</option>);
+      });
+    }
+    return items;
   }
 
   render() {
@@ -62,16 +65,10 @@ export class LevelCheckBox extends React.Component {
           value={this.state.level}
           onChange={e => this.handleChange(e)}
         >
-          <option value="Beginner">Beginner</option>
-          <option value="Mercury">Mercury</option>
-          <option value="Gemini">Gemini</option>
-          <option value="Apollo">Apollo</option>
-          <option value="Skylab">Skylab</option>
-          <option value="Space-X">Space-X</option>
+          {this.createSelectItems()}
         </select>
 
         <i className="fa fa-check accept-level" aria-hidden="true" onClick={() => this.acceptLevel()} />
-        <i className="fa fa-times no-level-check" aria-hidden="true" onClick={() => this.missedLevelCheck()} />
       </div>
     );
   }

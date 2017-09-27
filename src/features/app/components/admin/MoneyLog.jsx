@@ -40,11 +40,11 @@ export class MoneyLog extends React.Component {
           const eachLog = this.props.log[l]
           return (
             <div className="money-log" key={l}>
-              <span className="col-xs-4">
+              <span className="col-xs-2">
                 <Link to={`editregistration/${eachLog.bookingId}`}>{eachLog.bookingId}</Link>
               </span>
-              <span className="col-xs-4">{eachLog.reason}</span>
-              <span className="col-xs-4">${eachLog.amount}</span>
+              <span className="col-xs-8">{eachLog.reason}</span>
+              <span className="col-xs-2">${eachLog.amount}</span>
             </div>
           );
         });
@@ -79,9 +79,9 @@ export class MoneyLog extends React.Component {
         <hr />
         <div className="money-log-wrapper flex-col">
           <div className="money-log-header">
-            <span className="col-xs-4">Booking ID</span>
-            <span className="col-xs-4">Reason</span>
-            <span className="col-xs-4">Amount</span>
+            <span className="col-xs-2">Booking ID</span>
+            <span className="col-xs-8">Reason</span>
+            <span className="col-xs-2">Amount</span>
           </div>
           <div className="money-log-body flex-col">
             {renderLogs()}
