@@ -136,7 +136,7 @@ export class Home extends React.Component {
             <input className="no-outline" type="checkbox" onChange={e => this.toggleNotChecked(e)} />
           </div>
         </div>
-        <div className="flex-row flex-justify-space-between">
+        <div className="home-search flex-row flex-justify-space-between">
           <div>
             <label htmlFor="search">Search Registrations</label>
             <input className="search search-input" id="search" type="text" onChange={this.handleValueChange} />

@@ -11,9 +11,20 @@
   }
 }
 
-.search {
-  margin: 10px 0 10px 0;
+.home-search {
+  font-size: 0.8em;
+  div:first-child {
+    width: 50%
+  }
+  .search {
+    margin: 10px 0 10px 0;
+  }
+
+  .search-input {
+    width: 140px;
+  }
 }
+
 
 .registrations-wrapper {
 
@@ -43,6 +54,7 @@
     height: -webkit-calc(100vh - 300px);
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    font-size: 0.8em;
 
     a:nth-child(even) {
       background: #E1E1E1
@@ -64,8 +76,23 @@
     font-size: 0.7em;
   }
 
+  .registrations-wrapper {
+    font-size: 0.7em;
+  }
+
   .registrations-header {
     font-size: 0.7em;
+
+    span {
+      padding: 0 5px!important;
+
+    }
+  }
+
+  .registration-box-link {
+    span {
+      padding: 0 5px!important;
+    }
   }
 
   .registrations-body {
