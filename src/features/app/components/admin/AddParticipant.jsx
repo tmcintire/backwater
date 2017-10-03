@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import * as api from '../../../data/api';
+import * as helpers from '../../../data/helpers';
 
 const Loading = require('react-loading-animation');
 
@@ -130,7 +131,8 @@ export class AddParticipant extends React.Component {
 
   createSelectItems() {
     let items = [];
-    _.forIn(this.props.tracks, (t, index) => {
+    let tracks = helpers.sortTracks(this.props.tracks);    
+    _.forIn(tracks, (t, index) => {
       items.push(<option key={index} value={t.name}>{t.level}</option>);
     });
     return items;

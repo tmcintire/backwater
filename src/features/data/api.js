@@ -136,6 +136,8 @@ if (development === true) {
       sortBy: 6,
     });
     firebaseRef.child('Tracks').set(tracks);
+    firebaseRef.child('moneyLog').set({});
+    firebaseRef.child('totalCollected').set(0);
     regRef.set(object);
   }).catch((error) => {
     console.log(error);

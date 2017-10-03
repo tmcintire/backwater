@@ -35,12 +35,15 @@ export class EditRegistration extends React.Component {
         loading,
         showSaved: false,
         moneyLogComment: 'Paid off amount due on registration',
+        error: '',
       };
     } else {
       this.state = {
         registration: {},
         loading: true,
         showSaved: false,
+        error: '',
+        moneyLogComment: 'Paid off amount due on registration',        
       };
     }
 
@@ -85,6 +88,9 @@ export class EditRegistration extends React.Component {
 
   toggleCheckedIn = (e) => {
     if (this.state.registration['Amount Owed'] !== '0.00') {
+      this.setState({
+        error: 'Registration must be paid before checking in',
+      });
       return;
     }
     const object = {
@@ -129,8 +135,12 @@ export class EditRegistration extends React.Component {
   }
 
   updateMoneyLogComment = (comment) => {
+    let newComment = comment;
+    if (parseInt(this.state.registration['Amount Owed'], 10) > 0) {
+      newComment = this.state.moneyLogComment + ', ' + comment
+    }
     this.setState({
-      moneyLogComment: comment,
+      moneyLogComment: newComment,
     });
   }
 
@@ -147,6 +157,8 @@ export class EditRegistration extends React.Component {
   render() {
     const { registration, partner, comps } = this.state;
     const renderSaved = () => (this.state.showSaved ? <h4 className="saved-message">Saved</h4> : null);
+    const renderError = this.state.error !== '' ? this.state.error : '';
+
     const renderRegistration = () => {
       if (this.state.loading) {
         return (
@@ -162,6 +174,7 @@ export class EditRegistration extends React.Component {
             <span>Check In!</span>
             <input className="no-outline" type="checkbox" checked={registration.CheckedIn} onChange={e => this.toggleCheckedIn(e)} />
           </div>
+          <p>{renderError}</p>
 
           <hr />
           <div className="flex-row flex-wrap flex-justify-space-between">
