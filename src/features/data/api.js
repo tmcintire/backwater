@@ -174,6 +174,13 @@ export function fetchTracks() {
   });
 }
 
+export function fetchConfig() {
+  firebaseRef.child('config').on('value', (snapshot) => {
+    const config = snapshot.val();
+    store.dispatch(actions.configReceived(config));
+  });
+}
+
 export function fetchDances() {
   firebaseRef.child('Dances').on('value', (snapshot) => {
     const dances = snapshot.val();

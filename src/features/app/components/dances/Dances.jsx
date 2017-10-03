@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import * as api from '../../../data/api';
 
 export class Dances extends React.Component {
@@ -11,6 +12,7 @@ export class Dances extends React.Component {
       loaded: false,
       added: false,
       removed: false,
+      error: '',
     };
   }
 
@@ -34,8 +36,13 @@ export class Dances extends React.Component {
   }
 
   setStateToFirstDance(dances) {
+    const time = Date.now();
+    let dance = _.filter(dances, d => d.start < time && time < d.end)[0];
+    if (_.isEmpty(dance)) {
+      dance = dances[0];
+    }
     this.setState({
-      currentDance: dances[0],
+      currentDance: dance,
       dances,
       loaded: true,
     });
@@ -43,9 +50,15 @@ export class Dances extends React.Component {
 
   updateDance(dance) {
     const newDance = _.filter(this.state.dances, (d, index) => d.key === dance)[0];
-    this.setState({
-      currentDance: newDance,
-    });
+    if ((newDance.start < Date.now() && Date.now() < newDance.end) || this.props.config.overrideDanceRestriction) {
+      this.setState({
+        currentDance: newDance,
+      });
+    } else {
+      this.setState({
+        error: 'This dance is not available to be changed',
+      });
+    }
   }
 
   addRemoveDancePass = (num) => {
@@ -71,6 +84,7 @@ export class Dances extends React.Component {
   }
 
   render() {
+    const renderError = this.state.error !== '' ? this.state.error : '';
     const renderDances = () => {
       return this.state.loaded && this.state.loaded !== undefined ? (
         <div>
@@ -79,6 +93,7 @@ export class Dances extends React.Component {
             <span className="link" onClick={() => this.updateDance('Saturday')}>Saturday Night</span>
             <span className="link" onClick={() => this.updateDance('Sunday')}>Sunday Night</span>
           </div>
+          {renderError}
           <h1 className="text-center">{this.state.currentDance.name}</h1>
 
           <hr />

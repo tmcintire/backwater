@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import { LevelCheckInfo } from './LevelCheckInfo';
 
 const Loading = require('react-loading-animation');
@@ -64,6 +65,9 @@ export class LevelCheckUpdates extends React.Component {
     return (
       <div className="container form-container">
         <h3 className="text-center">Registration Updates</h3>
+        <div className="header-links">
+          <Link to="/admin"><button className="btn btn-primary">Back to Admin</button></Link>
+        </div>
         <div>
           <span className="col-xs-1">ID</span>
           <span className="col-xs-2">First Name</span>

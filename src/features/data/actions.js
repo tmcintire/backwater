@@ -25,6 +25,16 @@ export function tracksReceived(tracks) {
   };
 }
 
+export function configReceived(config) {
+  return function (dispatch) { // eslint-disable-line
+    dispatch({ type: 'START_FETCHING_CONFIG' });
+    dispatch({
+      type: 'RECEIVED_CONFIG',
+      config,
+    });
+  };
+}
+
 export function dancesReceived(dances) {
   return function (dispatch) { // eslint-disable-line
     dispatch({ type: 'START_FETCHING_DANCES' });
