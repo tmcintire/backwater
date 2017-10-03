@@ -15,8 +15,8 @@ export class LevelCheck extends React.Component {
       filteredFollows: {},
       intermediateFilter: ['Intermediate'],
       advancedFilter: ['Advanced'],
-      currentFilter: ['Intermediate'],
-      title: 'Intermediate',
+      currentFilter: ['Advanced'],
+      title: 'Advanced',
       showLeads: true,
       loading: true,
     };
