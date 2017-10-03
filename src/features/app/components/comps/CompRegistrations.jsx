@@ -15,8 +15,8 @@ export class CompRegistrations extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.registrations) {
-      const openLeads = nextProps.registrations.filter(reg => reg.Open === 'Yes' && reg.OpenLeadFollow === 'Lead');
-      const openFollows = nextProps.registrations.filter(reg => reg.Open === 'Yes' && reg.OpenLeadFollow === 'Follow');
+      const openLeads = nextProps.registrations.filter(reg => reg.Open === 'Yes' && reg.OpenLeadFollow === 'lead');
+      const openFollows = nextProps.registrations.filter(reg => reg.Open === 'Yes' && reg.OpenLeadFollow === 'follow');
 
       this.setState({
         openLeads,

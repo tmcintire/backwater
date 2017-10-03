@@ -10,8 +10,15 @@ export class AddParticipant extends React.Component {
     super();
 
     this.state = {
-      level: 'Beginner',
+      bookingId: parseInt(api.getLastBookingId(), 10) + 1,
+      firstName: '',
+      lastName: '',
+      leadFollow: '',
+      price: '',
+      hasPaid: false,
+      level: '',
       displayMessage: false,
+      errors: {},
     };
   }
 
@@ -23,49 +30,84 @@ export class AddParticipant extends React.Component {
         price,
       });
     }
+    if (nextProps.registrations) {
+      this.setState({
+        bookingId: parseInt(api.getLastBookingId(), 10) + 1,
+      });
+    }
+  }
+
+  validate = (firstName, lastName, leadFollow, level, price, hasPaid) => {
+    // true means invalid, so our conditions got reversed
+    return {
+      firstName: firstName.length === 0,
+      lastName: lastName.length === 0,
+      leadFollow: leadFollow.length === 0,
+      level: level.length === 0,
+      price: price.length === 0,
+      hasPaid: !hasPaid,
+    };
   }
 
   addParticipant = (e, id) => {
     e.preventDefault();
-    if (!this.HasPaid.checked) {
+    if (!this.state.hasPaid) {
       this.setState({
         displayMessage: true,
       });
       return;
     }
-    const amount = this.HasPaid.checked ? this.state.price : '0.00';
+    const errors = this.validate(
+      this.state.firstName,
+      this.state.lastName,
+      this.state.leadFollow,
+      this.state.level,
+      this.state.price,
+      this.state.hasPaid);
+
+    this.setState({ errors, hasErrors: false }); // set state as false for now
+
+    if (_.some(errors, err => err === true)) {
+      this.setState({ hasErrors: true });
+      return;
+    }
+
+    const amount = this.HasPaid ? this.state.price : '0.00';
     api.updateTotalCollected(parseInt(amount, 10));
 
     const moneyLog = {
-      bookingId: this.BookingID.value,
+      bookingId: this.state.bookingId,
       amount: this.state.price,
-      reason: `New registration - ${this.Level.value}`,
+      reason: `New registration - ${this.state.level.name}`,
     };
     api.updateMoneyLog(moneyLog);
 
     const object = {
-      'First Name': this['First Name'].value,
-      BookingID: this.BookingID.value,
-      'Last Name': this['Last Name'].value,
-      Level: _.filter(this.props.tracks, t => t.name === this.Level.value)[0],
-      HasLevelCheck: this.Level.value === 'Advanced',
-      HasPaid: this.HasPaid.checked,
+      'First Name': this.state.firstName,
+      BookingID: JSON.stringify(this.state.bookingId),
+      'Last Name': this.state.lastName,
+      Level: this.state.level,
+      HasLevelCheck: this.state.level.name === 'Advanced',
+      LevelChecked: false,
+      LevelUpdated: false,
+      OriginalLevel: this.state.level.name,
+      HasPaid: this.state.hasPaid,
+      LeadFollow: this.state.leadFollow,
       Open: 'No',
       AdNov: 'No',
-      'Amount Owed': this.HasPaid.checked ? '0.00' : this.state.price,
+      'Amount Owed': this.state.hasPaid ? '0.00' : this.state.price,
       'Original Amount Owed': this.state.price,
       CheckedIn: false,
       WalkIn: true,
     };
 
-    if (this.HasPaid.checked) {
+    if (this.HasPaid) {
       const newTotal = this.state.price;
       api.updateTotalCollected(newTotal);
     }
 
     api.addRegistration(id, object);
     window.location = `#/editregistration/${id}`;
-    this.clearValues();
   }
 
   clearValues = () => {
@@ -86,18 +128,47 @@ export class AddParticipant extends React.Component {
     });
   }
 
-  handlePriceChange = (e) => {
-    this.setState({
-      price: e.target.value,
-    });
-  }
-
   createSelectItems() {
     let items = [];
     _.forIn(this.props.tracks, (t, index) => {
-      items.push(<option key={index} value={t.name}>{t.name}</option>);
+      items.push(<option key={index} value={t.name}>{t.level}</option>);
     });
     return items;
+  }
+
+  handleChange = (e) => {
+    let level;
+    const target = e.target.name;
+    switch (target) {
+      case 'level':
+        level = _.filter(this.props.tracks, t => t.name === e.target.value)[0];
+        this.setState({ [target]: level, price: level.price });
+        break;
+      case 'hasPaid':
+        this.setState({ [target]: e.target.checked });
+        break;
+      default:
+        this.setState({ [target]: e.target.value });
+        break;
+    }
+
+    if (this.state.hasErrors) {
+      const errors = this.validate(
+        this.state.firstName,
+        this.state.lastName,
+        this.state.leadFollow,
+        this.state.level,
+        this.state.price,
+        this.state.hasPaid);
+
+      if (errors) {
+        this.setState({
+          hasErrors: true,
+          errors,
+        });
+        return;
+      }
+    }
   }
 
   handleCancel = (e) => {
@@ -108,16 +179,18 @@ export class AddParticipant extends React.Component {
   render() {
     const  { displayMessage } = this.state;
     const renderDisplayMessage = () => {
-      if (this.state.displayMessage) {
+      if (displayMessage) {
         return (
           <h3 className="error-message">Participants must pay the full amount before entering</h3>
         );
       }
     };
 
+    const renderErrorMessage = this.state.hasErrors ? (<h4 className="error-message">Plese check the form for errors</h4>) : '';
+
     const renderForm = () => {
       if (this.props.loading === false) {
-        const id = parseInt(api.getLastBookingId(), 10) + 1;
+        const id = this.state.bookingId;
         return (
           <div>
             <div className="form-container">
@@ -126,24 +199,31 @@ export class AddParticipant extends React.Component {
               <div className="form-group">
                 <form>
                   <label htmlFor="type">BookingID</label>
-                  <input disabled className="form-control" type="text" defaultValue={id} ref={(ref) => { this.BookingID = ref; }} />
+                  <input disabled className="form-control" type="text" value={id} onChange={this.handleChange} autoFocus />
                   <label htmlFor="type">First</label>
-                  <input className="form-control" type="text" ref={(ref) => { this['First Name'] = ref; }} />
+                  <input name="firstName" onChange={this.handleChange} className={`form-control ${this.state.errors.firstName ? 'error' : ''}`} type="text" />
                   <label htmlFor="type">Last</label>
-                  <input className="form-control" type="text" ref={(ref) => { this['Last Name'] = ref; }} />
+                  <input name="lastName" onChange={this.handleChange} className={`form-control ${this.state.errors.lastName ? 'error' : ''}`} type="text" />
+                  <label htmlFor="type">Lead/Follow</label>
+                  <select name="leadFollow" onChange={this.handleChange} className={`form-control ${this.state.errors.leadFollow ? 'error' : ''}`} >
+                    <option value="" />
+                    <option value="lead">Lead</option>
+                    <option value="follow">Follow</option>
+                  </select>
                   <label htmlFor="type">Level</label>
-                  <select className="form-control" onChange={e => this.handleLevelChange(e)} ref={(ref) => { this.Level = ref; }} >
-                    <option value=""></option>
+                  <select name="level" onChange={this.handleChange} className={`form-control ${this.state.errors.level ? 'error' : ''}`} >
+                    <option value="" />
                     {this.createSelectItems()}
                   </select>
 
                   <label htmlFor="type">Price</label>
-                  <input className="form-control" type="text" onChange={e => this.handlePriceChange(e)} value={this.state.price} />
+                  <input onChange={this.handleChange} name="price" className={`form-control ${this.state.errors.price ? 'error' : ''}`} type="text" value={this.state.price} />
 
                   <label htmlFor="type">Fully Paid</label>
-                  <input className="form-control" type="checkbox" ref={(ref) => { this.HasPaid = ref; }} />
+                  <input onChange={this.handleChange} name="hasPaid" className="form-control" type="checkbox" />
 
                   {renderDisplayMessage()}
+                  {renderErrorMessage}
                   <div className="form-submit-buttons flex-row flex-justify-space-between">
                     <button onClick={e => this.handleCancel(e)} className="btn btn-danger custom-buttons">Cancel</button>
                     <button onClick={e => this.addParticipant(e, id)} className="btn btn-success custom-buttons">Add</button>

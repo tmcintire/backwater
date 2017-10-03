@@ -11,6 +11,7 @@ let rawData;
 let lastBookingId = 0;
 
 const regRef = firebaseRef.child('registrations');
+const danceRef = firebaseRef.child('Dances');
 const development = true;
 
 if (development === true) {
@@ -120,6 +121,20 @@ if (development === true) {
         }
       });
     });
+    // Add additional tracks
+    tracks.push({
+      name: 'SaturdayDayPass',
+      level: 'Saturday Day Pass',
+      price: '70.00',
+      sortBy: 5,
+    });
+
+    tracks.push({
+      name: 'SundayDayPass',
+      level: 'Sunday Day Pass',
+      price: '70.00',
+      sortBy: 6,
+    });
     firebaseRef.child('Tracks').set(tracks);
     regRef.set(object);
   }).catch((error) => {
@@ -154,6 +169,13 @@ export function fetchTracks() {
   firebaseRef.child('Tracks').on('value', (snapshot) => {
     const tracks = snapshot.val();
     store.dispatch(actions.tracksReceived(tracks));
+  });
+}
+
+export function fetchDances() {
+  firebaseRef.child('Dances').on('value', (snapshot) => {
+    const dances = snapshot.val();
+    store.dispatch(actions.dancesReceived(dances));
   });
 }
 
@@ -207,6 +229,26 @@ export function updateTotalCollected(amount) {
   firebaseRef.child('totalCollected').once('value').then((res) => {
     const amountToUpdate = res.val() + parseInt(amount, 10);
     firebaseRef.child('totalCollected').set(amountToUpdate);
+  });
+}
+
+export function addRemoveDancePass(key, num) {
+  danceRef.child(key).once('value').then((res) => {
+    const dance = res.val();
+    let count = dance.count + num;
+    if (count < 0) {
+      count = 0;
+    }
+    danceRef.child(key).child('count').set(count);
+
+    updateMoneyLog({
+      bookingID: 'N/A',
+      amount: num === 1 ? dance.price : `-${dance.price}`,
+      reason: num === 1 ? dance.name : `Correction - ${dance.name}`,
+    });
+
+    const amount = num === 1 ? dance.price : `-${dance.price}`;
+    updateTotalCollected(amount);
   });
 }
 

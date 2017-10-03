@@ -34,6 +34,10 @@ body {
   justify-content: center;
 }
 
+.flex-align-items-center {
+  align-items: center;
+}
+
 .no-outline {
   &:focus {
     outline: none!important;
@@ -52,4 +56,10 @@ body {
 
 .mobile-view {
   display: none;
+}
+
+.link {
+  &:hover {
+    cursor: pointer;
+  }
 }

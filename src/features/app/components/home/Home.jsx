@@ -8,8 +8,10 @@ export class Home extends React.Component {
   constructor(props) {
     super(props);
 
+    const registrations = props.registrations ? helpers.sortRegistrations(props.registrations, 'Last Name') : props.registrations;
+
     this.state = {
-      filteredRegistrations: props.registrations,
+      filteredRegistrations: registrations,
       filter: '',
       filterText: '',
     };

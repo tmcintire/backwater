@@ -25,6 +25,16 @@ export function tracksReceived(tracks) {
   };
 }
 
+export function dancesReceived(dances) {
+  return function (dispatch) { // eslint-disable-line
+    dispatch({ type: 'START_FETCHING_DANCES' });
+    dispatch({
+      type: 'RECEIVED_DANCES',
+      dances,
+    });
+  };
+}
+
 export function pricesReceived(prices) {
   return function (dispatch) { // eslint-disable-line
     dispatch({ type: 'START_FETCHING_PRICES' });

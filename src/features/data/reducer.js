@@ -48,6 +48,24 @@ export const tracks = (state = [], action) => {
   }
 };
 
+export const dances = (state = [], action) => {
+  switch (action.type) {
+    case 'START_FETCHING_DANCES':
+      return {
+        ...state,
+        loading: true,
+      };
+    case 'RECEIVED_DANCES':
+      return {
+        ...state,
+        dances: action.dances,
+        loading: false,
+      };
+    default:
+      return state;
+  }
+};
+
 export const prices = (state = [], action) => {
   switch (action.type) {
     case 'START_FETCHING_PRICES':
@@ -116,4 +134,5 @@ export default combineReducers({
   prices,
   moneyLog,
   connectionState,
+  dances,
 });

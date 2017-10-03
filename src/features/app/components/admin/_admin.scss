@@ -14,6 +14,10 @@
   color: red;
 }
 
+.error {
+  border: 1px solid red;
+}
+
 .search-input {
   border: 1px solid gray;
 }
@@ -166,6 +170,13 @@
   .level-graph {
     padding: 10px;
   }
+}
+
+.total-collected {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 61px;
+  margin-top: 11px;
 }
 
 @media (max-width: 500px) {

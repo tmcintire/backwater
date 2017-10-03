@@ -1,8 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
-import * as api from '../../../data/api';
 import { LevelCheckInfo } from './LevelCheckInfo';
-import { GeminiBadges } from './GeminiBadges';
 
 const Loading = require('react-loading-animation');
 

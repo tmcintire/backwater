@@ -7,6 +7,7 @@ import * as api from './api';
 function* initialize() {
   // yield call(helpers.getUser);
   yield call(api.fetchRegistrations, 1);
+  yield call(api.fetchDances, 1);
   yield call(api.fetchTracks, 1);
   yield call(api.getTotalCollected, 1);
   yield call(api.fetchPrices, 1);

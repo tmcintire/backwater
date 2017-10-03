@@ -58,6 +58,7 @@ export class Admin extends React.Component {
           <Link to="/admin/levelcheck">Level Check</Link>
           <Link to="/admin/levelcheckupdates">Completed Level Checks</Link>
           <Link to="/admin/levelcheckdashboard">Level Check Dashboard</Link>
+          <Link to="/admin/dashboard">Dashboard</Link>
         </div>
         <label htmlFor="name">Search</label>
         <input className="search-input" type="text" onChange={this.handleValueChange} />

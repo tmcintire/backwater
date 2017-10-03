@@ -86,6 +86,7 @@ export class MoneyLog extends React.Component {
           <div className="money-log-body flex-col">
             {renderLogs()}
           </div>
+          <span className="total-collected" flex-row flex>Total Collected: ${this.props.totalCollected}</span>
         </div>
         {renderAddMoneyLog()}
       </div>

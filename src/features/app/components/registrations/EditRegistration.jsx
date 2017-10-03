@@ -84,6 +84,9 @@ export class EditRegistration extends React.Component {
   }
 
   toggleCheckedIn = (e) => {
+    if (this.state.registration['Amount Owed'] !== '0.00') {
+      return;
+    }
     const object = {
       CheckedIn: e.target.checked,
     };
@@ -163,6 +166,7 @@ export class EditRegistration extends React.Component {
           <hr />
           <div className="flex-row flex-wrap flex-justify-space-between">
             <span className="full-width"><strong>Level: </strong>{registration.Level.level} </span>
+            <span className="full-width"><strong>Level Check: </strong>{registration.Level.name === 'Advanced' ? 'Yes' : 'No'} </span>
             <Comps
               comps={comps}
               saved={this.saved}
