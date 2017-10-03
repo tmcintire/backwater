@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import _ from 'lodash';
-import * as api from '../../../data/api';
+import * as helpers from '../../../data/helpers';
 import { LevelCheckBox } from './LevelCheckBox';
 
 const Loading = require('react-loading-animation');
@@ -59,8 +59,8 @@ export class LevelCheck extends React.Component {
       _.includes(filter, r.OriginalLevel));
 
     resolve({
-      filteredLeads,
-      filteredFollows,
+      filteredLeads: helpers.sortRegistrations(filteredLeads, 'BookingID'),
+      filteredFollows: helpers.sortRegistrations(filteredFollows, 'BookingID'),
     });
   });
 
