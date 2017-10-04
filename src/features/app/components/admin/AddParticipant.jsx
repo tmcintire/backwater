@@ -73,8 +73,7 @@ export class AddParticipant extends React.Component {
       return;
     }
 
-    const amount = this.HasPaid ? this.state.price : '0.00';
-    api.updateTotalCollected(parseInt(amount, 10));
+    api.updateTotalCollected(this.state.price);
 
     const moneyLog = {
       bookingId: this.state.bookingId,
