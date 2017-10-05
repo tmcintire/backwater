@@ -9,6 +9,7 @@ export class LevelCheckUpdates extends React.Component {
     super(props);
 
     this.state = {
+      checkedRegistrations: {},
       changedRegistrations: {},
       loading: true,
     };
@@ -17,7 +18,10 @@ export class LevelCheckUpdates extends React.Component {
   componentWillMount() {
     if (this.props.registrations) {
       const changedRegistrations = this.updateChanges(this.props.registrations);
+      const checkedRegistrations = this.checkedRegistrations(this.props.registrations);
+
       this.setState({
+        checkedRegistrations,
         changedRegistrations,
         loading: false,
       });
@@ -27,9 +31,11 @@ export class LevelCheckUpdates extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.registrations) {
       const changedRegistrations = this.updateChanges(nextProps.registrations);
+      const checkedRegistrations = this.checkedRegistrations(nextProps.registrations);
 
       this.setState({
         changedRegistrations,
+        checkedRegistrations,
         loading: false,
       });
     }
@@ -43,6 +49,8 @@ export class LevelCheckUpdates extends React.Component {
     return changedRegistrations;
   };
 
+  checkedRegistrations = registrations => registrations.filter(r => r.LevelChecked === true && r.OriginalLevel === r.Level.name);
+
   render() {
     const renderChangedRegistrations = () =>
       this.state.changedRegistrations.map((registration, index) => {
@@ -53,9 +61,26 @@ export class LevelCheckUpdates extends React.Component {
         }
       });
 
+    const renderCheckeddRegistrations = () =>
+      this.state.checkedRegistrations.map((registration, index) => {
+        if (registration) {
+          return (
+            <LevelCheckInfo updated key={index} registration={registration} />
+          );
+        }
+      });
+
     const renderRegistrations = () => {
       if (this.state.loading === false) {
-        return renderChangedRegistrations();
+        return (
+          <div>
+            <h1>Changed Levels</h1>
+            {renderChangedRegistrations()}
+
+            <h1>Unchanged Levels</h1>
+            {renderCheckeddRegistrations()}
+          </div>
+        );
       }
       return (
         <Loading />

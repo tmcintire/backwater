@@ -12,7 +12,7 @@ let lastBookingId = 0;
 
 const regRef = firebaseRef.child('registrations');
 const danceRef = firebaseRef.child('Dances');
-const development = false;
+const development = true;
 
 if (development === true) {
   axios({
@@ -22,7 +22,6 @@ if (development === true) {
   }).then((response) => {
     headers = response.data.header;
     rawData = response.data.data;
-    let tracks = [];
 
     // 0:"BookingID",
     // 1:"Amount Owed",
@@ -77,42 +76,6 @@ if (development === true) {
           level,
         };
 
-        // Create the levels in the database
-        if (!_.some(tracks, t => t.name === data[5])) {
-          let price;
-          let sortBy;
-          switch (data[5]) {
-            case 'Beginner':
-              price = '65.00';
-              sortBy = 1;
-              level = 'Launching the Blues';
-              break;
-            case 'Intermediate':
-              price = '130.00';
-              sortBy = 2;
-              level = 'Engineering the Blues';
-              break;
-            case 'Advanced':
-              price = '130.00';
-              sortBy = 3;
-              level = 'Exploring the Blues';
-              break;
-            case 'DancePass':
-              price = '35.00';
-              sortBy = 4;
-              level = 'Dance Pass';
-              break;
-            default:
-              return;
-          }
-          tracks.push({
-            name: data[5],
-            price,
-            sortBy,
-            level,
-          });
-        }
-
         // Handle Paid entries
         if (data[1] === '0.00') {
           object[data[0]].HasPaid = true;
@@ -121,21 +84,7 @@ if (development === true) {
         }
       });
     });
-    // Add additional tracks
-    tracks.push({
-      name: 'SaturdayDayPass',
-      level: 'Saturday Day Pass',
-      price: '70.00',
-      sortBy: 5,
-    });
 
-    tracks.push({
-      name: 'SundayDayPass',
-      level: 'Sunday Day Pass',
-      price: '70.00',
-      sortBy: 6,
-    });
-    firebaseRef.child('Tracks').set(tracks);
     firebaseRef.child('moneyLog').set({});
     firebaseRef.child('totalCollected').set(0);
     regRef.set(object);
@@ -188,10 +137,10 @@ export function fetchDances() {
   });
 }
 
-export function fetchPrices() {
-  firebaseRef.child('prices').on('value', (snapshot) => {
-    const prices = snapshot.val();
-    store.dispatch(actions.pricesReceived(prices));
+export function fetchPasses() {
+  firebaseRef.child('Passes').on('value', (snapshot) => {
+    const passes = snapshot.val();
+    store.dispatch(actions.passesReceived(passes));
   });
 }
 
@@ -244,7 +193,7 @@ export function updateTotalCollected(amount) {
 export function addRemoveDancePass(key, num) {
   danceRef.child(key).once('value').then((res) => {
     const dance = res.val();
-    let count = dance.count + num;
+    let count = parseInt(dance.count, 10) + num;
     if (count < 0) {
       count = 0;
     }
@@ -267,3 +216,15 @@ export function updateMoneyLog(log) {
 }
 
 export const getLastBookingId = () => lastBookingId;
+
+export function update(child, index, data, isUpdate, nextIndex) {
+  if (isUpdate) {
+    firebaseRef.child(child).child(index).update(data);
+  } else {
+    firebaseRef.child(child).child(nextIndex).set(data);
+  }
+}
+
+export function deleteRef(child, index) {
+  firebaseRef.child(child).child(index).remove();
+}

@@ -9,9 +9,9 @@ function* initialize() {
   yield call(api.fetchRegistrations, 1);
   yield call(api.fetchDances, 1);
   yield call(api.fetchTracks, 1);
-  yield call(api.fetchConfig, 1);  
+  yield call(api.fetchConfig, 1);
   yield call(api.getTotalCollected, 1);
-  yield call(api.fetchPrices, 1);
+  yield call(api.fetchPasses, 1);
   yield call(api.fetchMoneyLog, 1);
   yield call(api.setupConnectionListener, 1);
 }

@@ -17,6 +17,7 @@ export class AddParticipant extends React.Component {
       leadFollow: '',
       price: '',
       hasPaid: false,
+      pass: '',
       level: '',
       displayMessage: false,
       errors: {},
@@ -38,14 +39,14 @@ export class AddParticipant extends React.Component {
     }
   }
 
-  validate = (firstName, lastName, leadFollow, level, price, hasPaid) => {
+  validate = (firstName, lastName, leadFollow, price, pass, hasPaid) => {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length === 0,
       lastName: lastName.length === 0,
       leadFollow: leadFollow.length === 0,
-      level: level.length === 0,
       price: price.length === 0,
+      pass: pass.length === 0,
       hasPaid: !hasPaid,
     };
   }
@@ -62,8 +63,8 @@ export class AddParticipant extends React.Component {
       this.state.firstName,
       this.state.lastName,
       this.state.leadFollow,
-      this.state.level,
       this.state.price,
+      this.state.pass,
       this.state.hasPaid);
 
     this.setState({ errors, hasErrors: false }); // set state as false for now
@@ -78,7 +79,7 @@ export class AddParticipant extends React.Component {
     const moneyLog = {
       bookingId: this.state.bookingId,
       amount: this.state.price,
-      reason: `New registration - ${this.state.level.name}`,
+      reason: `New registration - ${this.state.level.name || 'N/A'} - ${this.state.pass.name}`,
     };
     api.updateMoneyLog(moneyLog);
 
@@ -86,11 +87,11 @@ export class AddParticipant extends React.Component {
       'First Name': this.state.firstName,
       BookingID: JSON.stringify(this.state.bookingId),
       'Last Name': this.state.lastName,
-      Level: this.state.level,
+      Level: this.state.level || 'N/A',
       HasLevelCheck: this.state.level.name === 'Advanced',
       LevelChecked: false,
       LevelUpdated: false,
-      OriginalLevel: this.state.level.name,
+      OriginalLevel: this.state.level.name || 'N/A',
       HasPaid: this.state.hasPaid,
       LeadFollow: this.state.leadFollow,
       Open: 'No',
@@ -99,6 +100,7 @@ export class AddParticipant extends React.Component {
       'Original Amount Owed': this.state.price,
       CheckedIn: false,
       WalkIn: true,
+      TicketType: this.state.pass.name,
     };
 
     if (this.HasPaid) {
@@ -128,7 +130,16 @@ export class AddParticipant extends React.Component {
     });
   }
 
-  createSelectItems() {
+  createSelectPassItems() {
+    let items = [];
+    let passes = helpers.sortTracks(this.props.passes);    
+    _.forIn(passes, (p, index) => {
+      items.push(<option key={index} value={p.name}>{p.name}</option>);
+    });
+    return items;
+  }
+
+  createSelectLevelItems() {
     let items = [];
     let tracks = helpers.sortTracks(this.props.tracks);    
     _.forIn(tracks, (t, index) => {
@@ -138,12 +149,17 @@ export class AddParticipant extends React.Component {
   }
 
   handleChange = (e) => {
+    let pass;
     let level;
     const target = e.target.name;
     switch (target) {
+      case 'pass':
+        pass = _.filter(this.props.passes, p => p.name === e.target.value)[0];
+        this.setState({ [target]: pass, price: pass ? pass.price: '' });
+        break;
       case 'level':
         level = _.filter(this.props.tracks, t => t.name === e.target.value)[0];
-        this.setState({ [target]: level, price: level.price });
+        this.setState({ [target]: level });
         break;
       case 'hasPaid':
         this.setState({ [target]: e.target.checked });
@@ -158,7 +174,6 @@ export class AddParticipant extends React.Component {
         this.state.firstName,
         this.state.lastName,
         this.state.leadFollow,
-        this.state.level,
         this.state.price,
         this.state.hasPaid);
 
@@ -190,7 +205,7 @@ export class AddParticipant extends React.Component {
     const renderErrorMessage = this.state.hasErrors ? (<h4 className="error-message">Plese check the form for errors</h4>) : '';
 
     const renderForm = () => {
-      if (this.props.loading === false) {
+      if (this.props.tracksLoading === false && this.props.passesLoading === false) {
         const id = this.state.bookingId;
         return (
           <div>
@@ -211,10 +226,15 @@ export class AddParticipant extends React.Component {
                     <option value="lead">Lead</option>
                     <option value="follow">Follow</option>
                   </select>
+                  <label htmlFor="type">Pass</label>
+                  <select name="pass" onChange={this.handleChange} className={`form-control ${this.state.errors.pass ? 'error' : ''}`} >
+                    <option value="" />
+                    {this.createSelectPassItems()}
+                  </select>
                   <label htmlFor="type">Level</label>
                   <select name="level" onChange={this.handleChange} className={`form-control ${this.state.errors.level ? 'error' : ''}`} >
                     <option value="" />
-                    {this.createSelectItems()}
+                    {this.createSelectLevelItems()}
                   </select>
 
                   <label htmlFor="type">Price</label>

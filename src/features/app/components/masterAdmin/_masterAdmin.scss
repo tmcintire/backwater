@@ -1,0 +1,20 @@
+.title {
+  font-weight: bold;
+}
+
+.saved-message {
+  position: fixed;
+  right: 25px;
+  top: 65px;
+  background: green;
+  animation: pulse 3s infinite;
+  padding: 15px;
+  border-radius: 5px;
+  color: white;
+}
+
+.header-links {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}

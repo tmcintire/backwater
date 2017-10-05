@@ -24,7 +24,12 @@ const {
   Instructions,
   MoneyLogContainer,
   DancesContainer,
-  DashboardContainer } = app.components;
+  DashboardContainer,
+  MasterAdmin,
+  EditTracksContainer,
+  EditPassesContainer,
+  EditDancesContainer,
+  EditConfigContainer } = app.components;
 
 /* Define routes for administrators */
 const adminUserRoutes = () => (
@@ -38,6 +43,11 @@ const adminUserRoutes = () => (
     <Route path="/admin/moneylog" component={MoneyLogContainer} />
     <Route path="/admin/dashboard" component={DashboardContainer} />
     <Route path="/admin/levelcheckdashboard" component={LevelCheckDashboardContainer} />
+    <Route path="/administrator" component={MasterAdmin} />
+    <Route path="/administrator/edittracks" component={EditTracksContainer} />
+    <Route path="/administrator/editpasses" component={EditPassesContainer} />
+    <Route path="/administrator/editdances" component={EditDancesContainer} />
+    <Route path="/administrator/editconfig" component={EditConfigContainer} />
     <Route path="/editregistration/:id" component={EditRegistrationContainer} />
     <Route path="/comps" component={CompRegistrationsContainer} />
     <Route path="/instructions" component={Instructions} />

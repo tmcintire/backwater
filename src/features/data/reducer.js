@@ -84,17 +84,17 @@ export const config = (state = [], action) => {
   }
 };
 
-export const prices = (state = [], action) => {
+export const passes = (state = [], action) => {
   switch (action.type) {
-    case 'START_FETCHING_PRICES':
+    case 'START_FETCHING_PASSES':
       return {
         ...state,
         loading: true,
       };
-    case 'RECEIVED_PRICES':
+    case 'RECEIVED_PASSES':
       return {
         ...state,
-        prices: action.prices,
+        passes: action.passes,
         loading: false,
       };
     default:
@@ -149,7 +149,7 @@ export default combineReducers({
   registrations,
   tracks,
   totalCollected,
-  prices,
+  passes,
   moneyLog,
   connectionState,
   dances,

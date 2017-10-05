@@ -88,9 +88,15 @@ export class EditRegistration extends React.Component {
 
   toggleCheckedIn = (e) => {
     if (this.state.registration['Amount Owed'] !== '0.00') {
-      this.setState({
-        error: 'Registration must be paid before checking in',
-      });
+      this.setState({ error: 'Registration must be paid before checking in' });
+      return;
+    }
+    if (this.state.registration.Open === 'Yes' && !this.state.registration.OpenLeadFollow) {
+      this.setState({ error: 'Please select a role for the open comp' });
+      return;
+    }
+    if (this.state.registration.OpenLeadFollow && this.state.registration.Open === 'No') {
+      this.setState({ error: 'Comp value should be yes if a role is selected' });
       return;
     }
     const object = {
@@ -174,12 +180,16 @@ export class EditRegistration extends React.Component {
             <span>Check In!</span>
             <input className="no-outline" type="checkbox" checked={registration.CheckedIn} onChange={e => this.toggleCheckedIn(e)} />
           </div>
-          <p>{renderError}</p>
+          <p className="error-text">{renderError}</p>
 
           <hr />
           <div className="flex-row flex-wrap flex-justify-space-between">
-            <span className="full-width"><strong>Level: </strong>{registration.Level.level} </span>
-            <span className="full-width"><strong>Level Check: </strong>{registration.Level.name === 'Advanced' ? 'Yes' : 'No'} </span>
+            <span className="full-width"><strong>Level: </strong>{registration.Level.level || 'N/A'} </span>
+            <span className="full-width"><strong>Pass: </strong>{registration.TicketType} </span>
+            <span className="full-width"><strong>Level Check: </strong>
+              <span className={`${registration.Level.name === 'Advanced' ? 'has-level-check' : ''}`}>{registration.Level.name === 'Advanced' ? 'Yes' : 'No'}</span>
+            </span>
+            
             <Comps
               comps={comps}
               saved={this.saved}

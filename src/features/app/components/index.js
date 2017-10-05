@@ -14,3 +14,8 @@ export { LevelCheckUpdatesContainer } from './admin/LevelCheckUpdatesContainer';
 export { LevelCheckDashboardContainer } from './admin/LevelCheckDashboardContainer';
 export { DancesContainer } from './dances/DancesContainer';
 export { DashboardContainer } from './admin/DashboardContainer';
+export { MasterAdmin } from './masterAdmin/MasterAdmin';
+export { EditTracksContainer } from './masterAdmin/EditTracksContainer';
+export { EditPassesContainer } from './masterAdmin/EditPassesContainer';
+export { EditDancesContainer } from './masterAdmin/EditDancesContainer';
+export { EditConfigContainer } from './masterAdmin/EditConfigContainer';

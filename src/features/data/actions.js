@@ -45,12 +45,12 @@ export function dancesReceived(dances) {
   };
 }
 
-export function pricesReceived(prices) {
+export function passesReceived(passes) {
   return function (dispatch) { // eslint-disable-line
-    dispatch({ type: 'START_FETCHING_PRICES' });
+    dispatch({ type: 'START_FETCHING_PASSES' });
     dispatch({
-      type: 'RECEIVED_PRICES',
-      prices,
+      type: 'RECEIVED_PASSES',
+      passes,
     });
   };
 }
