@@ -37,7 +37,8 @@ export class Dances extends React.Component {
 
   setStateToFirstDance(dances) {
     const time = Date.now();
-    let dance = _.filter(dances, d => d.start < time && time < d.end)[0];
+    let dance = _.filter(dances, d =>
+      new Date(d.startDate).getTime() < time && time < new Date(d.endDate).getTime())[0];
     if (_.isEmpty(dance)) {
       dance = dances[0];
     }
@@ -50,7 +51,13 @@ export class Dances extends React.Component {
 
   updateDance(dance) {
     const newDance = _.filter(this.state.dances, (d, index) => d.key === dance)[0];
-    if ((newDance.start < Date.now() && Date.now() < newDance.end) || this.props.config.overrideDanceRestriction) {
+    if (!newDance.startDate && !newDance.endDate) {
+      this.setState({
+        currentDance: newDance,
+      });
+    } else if (
+      (new Date(newDance.startDate).getTime() < Date.now() && Date.now() < new Date(newDance.endDate).getTime()) ||
+      this.props.config.overrideDanceRestriction) {
       this.setState({
         currentDance: newDance,
       });
@@ -83,15 +90,21 @@ export class Dances extends React.Component {
     }, 300);
   }
 
+  renderDanceOptions() {
+    let items = [];
+    _.forIn(this.props.dances, (d, index) => {
+      items.push(<span className="link" onClick={() => this.updateDance(d.key)}>{d.name}</span>);
+    });
+    return items;
+  }
+
   render() {
     const renderError = this.state.error !== '' ? this.state.error : '';
     const renderDances = () => {
       return this.state.loaded && this.state.loaded !== undefined ? (
         <div>
           <div className="flex-row flex-justify-space-between">
-            <span className="link" onClick={() => this.updateDance('Friday')}>Friday Night</span>
-            <span className="link" onClick={() => this.updateDance('Saturday')}>Saturday Night</span>
-            <span className="link" onClick={() => this.updateDance('Sunday')}>Sunday Night</span>
+            {this.renderDanceOptions()}
           </div>
           {renderError}
           <h1 className="text-center">{this.state.currentDance.name}</h1>

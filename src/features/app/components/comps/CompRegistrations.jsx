@@ -34,7 +34,7 @@ export class CompRegistrations extends React.Component {
       if (!this.state.loading) {
         return this.state.openLeads.map((o, index) => (
           <div key={index}>
-            <p>{o['First Name']} {o['Last Name']}</p>
+            <p>{index + 1} - {o['First Name']} {o['Last Name']}</p>
           </div>
         ));
       }
@@ -43,7 +43,7 @@ export class CompRegistrations extends React.Component {
       if (!this.state.loading) {
         return this.state.openFollows.map((o, index) => (
           <div key={index}>
-            <p>{o['First Name']} {o['Last Name']}</p>
+            <p>{index + 1} - {o['First Name']} {o['Last Name']}</p>
           </div>
         ));
       }

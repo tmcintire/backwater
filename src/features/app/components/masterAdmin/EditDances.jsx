@@ -1,5 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
+import Datetime from 'react-datetime';
 import { Link } from 'react-router';
 import * as api from '../../../data/api';
 
@@ -75,6 +77,24 @@ export class EditDances extends React.Component {
     this.setState({ showForm: false });
   }
 
+  handleStartDateChange = (selectedDate) => {
+    this.setState({
+      editedObject: {
+        ...this.state.editedObject,
+        startDate: selectedDate.format('MM/DD/YYYY h:mm A'),
+      },
+    });
+  }
+
+  handleEndDateChange = (selectedDate) => {
+    this.setState({
+      editedObject: {
+        ...this.state.editedObject,
+        endDate: selectedDate.format('MM/DD/YYYY h:mm A'),
+      },
+    });
+  }
+
   saved = () => {
     this.setState({
       showSaved: true,
@@ -94,11 +114,11 @@ export class EditDances extends React.Component {
       }
       return this.props.dances.map((dance, index) => (
         <div onClick={() => this.addEdit(index, true)}>
-          <p className="col-md-1">{dance.key}</p>
-          <p className="col-md-3">{dance.name}</p>
+          <p className="col-md-2">{dance.key}</p>
+          <p className="col-md-4">{dance.name}</p>
           <p className="col-md-1">{dance.price}</p>
-          <p className="col-md-3">{dance.start}</p>
-          <p className="col-md-3">{dance.end}</p>
+          <p className="col-md-2">{dance.startDate}</p>
+          <p className="col-md-2">{dance.endDate}</p>
           <p className="col-md-1">{dance.count}</p>
         </div>
 
@@ -122,16 +142,26 @@ export class EditDances extends React.Component {
                 <label htmlFor="type">Price</label>
                 <input className="form-control" name="price" defaultValue={this.state.isEditing ? this.state.editedObject.price : ''} onChange={this.handleChange} type="text" />
                 <label htmlFor="type">Start</label>
-                <input className="form-control" name="start" defaultValue={this.state.isEditing ? this.state.editedObject.start : ''} onChange={this.handleChange} type="number" />
+                <Datetime
+                  defaultValue={this.state.editedObject.startDate}
+                  id="date-picker"
+                  onChange={e => this.handleStartDateChange(e)}
+                />
                 <label htmlFor="type">End</label>
-                <input className="form-control" name="end" defaultValue={this.state.isEditing ? this.state.editedObject.end : ''} onChange={this.handleChange} type="number" />
+                <Datetime
+                  defaultValue={this.state.editedObject.endDate}
+                  id="date-picker"
+                  onChange={e => this.handleEndDateChange(e)}
+                />
                 <label htmlFor="type">Count</label>
                 <input className="form-control" name="count" defaultValue={this.state.isEditing ? this.state.editedObject.count : ''} onChange={this.handleChange} type="number" />
                 <br />
 
                 <div className="form-submit-buttons flex-row flex-justify-space-between">
                   <button onClick={e => this.cancel(e)} className="btn btn-danger custom-buttons">Cancel</button>
-                  <button onClick={e => this.saveChanges(e)} className="btn btn-success custom-buttons">Add</button>
+                  <button onClick={e => this.saveChanges(e)} className="btn btn-success custom-buttons">
+                    {this.state.isEditing ? 'Save' : 'Add'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -149,11 +179,11 @@ export class EditDances extends React.Component {
         <h1 className="text-center">Dances</h1>
         {renderSaved()}
         <div className="title">
-          <p className="col-md-1">Key</p>
-          <p className="col-md-3">Name</p>
+          <p className="col-md-2">Key</p>
+          <p className="col-md-4">Name</p>
           <p className="col-md-1">Price</p>
-          <p className="col-md-3">Start</p>
-          <p className="col-md-3">End</p>
+          <p className="col-md-2">Start</p>
+          <p className="col-md-2">End</p>
           <p className="col-md-1">Count</p>
         </div>
         {renderDances()}
