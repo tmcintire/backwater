@@ -150,10 +150,10 @@ export class Home extends React.Component {
         </div>
         <div className="registrations-wrapper flex-col">
           <div className="registrations-header">
-            <span className="col-xs-1">ID</span>
+            <span className="col-xs-1" onClick={e => this.filterRegistrations(e, 'BookingID')}>ID</span>
             <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'Last Name')}>Last Name</span>
             <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'First Name')}>First Name</span>
-            <span className="col-xs-3" onClick={e => this.filterRegistrations(e, 'Level')}>Track</span>
+            <span className="col-xs-3">Track</span>
             <span className="col-xs-1">Owed</span>
             <span className="col-xs-1">Checked In</span>
           </div>
