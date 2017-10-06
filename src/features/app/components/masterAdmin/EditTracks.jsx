@@ -92,11 +92,11 @@ export class EditTracks extends React.Component {
         );
       }
       return this.props.tracks.map((track, index) => (
-        <div onClick={() => this.addEdit(index, true)}>
-          <p className="col-md-4">{track.name}</p>
-          <p className="col-md-4">{track.level}</p>
-          <p className="col-md-4">{track.sortBy}</p>
-        </div>
+        <tr key={index} onClick={() => this.addEdit(index, true)}>
+          <td>{track.name}</td>
+          <td>{track.level}</td>
+          <td>{track.sortBy}</td>
+        </tr>
 
       ));
     };
@@ -140,12 +140,18 @@ export class EditTracks extends React.Component {
         </div>
         <h1 className="text-center">Tracks</h1>
         {renderSaved()}
-        <div className="title">
-          <p className="col-md-4">Name</p>
-          <p className="col-md-4">Level</p>
-          <p className="col-md-4">Sort By</p>
-        </div>
-        {renderTracks()}
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Level</th>
+              <th>Sort By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderTracks()}
+          </tbody>
+        </table>
         <button className="btn btn-primary" onClick={() => this.addEdit(null, false)}>Add New Track</button>
         {renderForm()}
       </div>

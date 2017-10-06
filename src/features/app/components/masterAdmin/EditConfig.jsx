@@ -56,9 +56,8 @@ export class EditConfig extends React.Component {
 
   saveChanges = (e) => {
     e.preventDefault();
-    const isUpdate = this.state.isEditing;
     const configKey = this.state.editedIndex;
-    api.update('config', this.state.editedIndex, this.state.editedObject[this.state.editedIndex], isUpdate, configKey);
+    api.updateConfig({ [configKey]: this.state.editedObject[configKey] });
     this.saved();
     this.setState({ showForm: false });
   }
@@ -92,10 +91,10 @@ export class EditConfig extends React.Component {
         );
       }
       return Object.keys(this.props.config).map((index) => (
-        <div onClick={() => this.addEdit(index, true)}>
-          <p className="col-md-6">{index}</p>
-          <p className="col-md-6">{`${this.props.config[index]}`}</p>
-        </div>
+        <tr key={index} onClick={() => this.addEdit(index, true)}>
+          <td>{index}</td>
+          <td>{`${this.props.config[index]}`}</td>
+        </tr>
 
       ));
     };
@@ -107,7 +106,7 @@ export class EditConfig extends React.Component {
         return (
           <div>
             <h1 className="text-center">{this.state.isEditing ? 'Edit Configuration' : 'Add Configuration'}</h1>
-            {this.state.isEditing ? <button className="btn btn-danger" onClick={e => this.delete(e)}>Delete Pass</button> : ''}
+            {this.state.isEditing ? <button className="btn btn-danger" onClick={e => this.delete(e)}>Delete Config</button> : ''}
             <div className="form-group">
               <form>
                 <label htmlFor="type">Config</label>
@@ -135,13 +134,19 @@ export class EditConfig extends React.Component {
         <div className="header-links">
           <Link to="/administrator"><button className="btn btn-primary">Back</button></Link>
         </div>
-        <h1 className="text-center">Passes</h1>
+        <h1 className="text-center">Configuration Parameters</h1>
         {renderSaved()}
-        <div className="title">
-          <p className="col-md-6">Config</p>
-          <p className="col-md-6">Value</p>
-        </div>
-        {renderConfig()}
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderConfig()}
+          </tbody>
+        </table>
         <button className="btn btn-primary" onClick={() => this.addEdit(null, false)}>Add New Configuration</button>
         {renderForm()}
       </div>

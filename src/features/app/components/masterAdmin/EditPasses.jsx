@@ -93,11 +93,11 @@ export class EditPasses extends React.Component {
         );
       }
       return this.props.passes.map((pass, index) => (
-        <div onClick={() => this.addEdit(index, true)}>
-          <p className="col-md-4">{pass.name}</p>
-          <p className="col-md-4">{pass.price}</p>
-          <p className="col-md-4">{pass.sortBy}</p>
-        </div>
+        <tr key={index} onClick={() => this.addEdit(index, true)}>
+          <td>{pass.name}</td>
+          <td>{pass.price}</td>
+          <td>{pass.sortBy}</td>
+        </tr>
 
       ));
     };
@@ -141,12 +141,18 @@ export class EditPasses extends React.Component {
         </div>
         <h1 className="text-center">Passes</h1>
         {renderSaved()}
-        <div className="title">
-          <p className="col-md-4">Name</p>
-          <p className="col-md-4">Price</p>
-          <p className="col-md-4">Sort By</p>
-        </div>
-        {renderPasses()}
+        <table className="table table-responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Sort By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderPasses()}
+          </tbody>
+        </table>
         <button className="btn btn-primary" onClick={() => this.addEdit(null, false)}>Add New Pass</button>
         {renderForm()}
       </div>

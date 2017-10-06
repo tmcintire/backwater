@@ -12,7 +12,6 @@ export class MasterAdmin extends React.Component {
           <Link to="/administrator/editpasses">Passes</Link>
           <Link to="/administrator/editdances">Dances</Link>
           <Link to="/administrator/editconfig">Config</Link>
-          <Link to="/administrator/edittotalcollected">Total Collected</Link>
         </div>
       </div>
     );

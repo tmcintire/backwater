@@ -113,14 +113,14 @@ export class EditDances extends React.Component {
         );
       }
       return this.props.dances.map((dance, index) => (
-        <div onClick={() => this.addEdit(index, true)}>
-          <p className="col-md-2">{dance.key}</p>
-          <p className="col-md-4">{dance.name}</p>
-          <p className="col-md-1">{dance.price}</p>
-          <p className="col-md-2">{dance.startDate}</p>
-          <p className="col-md-2">{dance.endDate}</p>
-          <p className="col-md-1">{dance.count}</p>
-        </div>
+        <tr key={index} onClick={() => this.addEdit(index, true)}>
+          <td>{dance.key}</td>
+          <td>{dance.name}</td>
+          <td>{dance.price}</td>
+          <td>{dance.startDate}</td>
+          <td>{dance.endDate}</td>
+          <td>{dance.count}</td>
+        </tr>
 
       ));
     };
@@ -178,15 +178,21 @@ export class EditDances extends React.Component {
         </div>
         <h1 className="text-center">Dances</h1>
         {renderSaved()}
-        <div className="title">
-          <p className="col-md-2">Key</p>
-          <p className="col-md-4">Name</p>
-          <p className="col-md-1">Price</p>
-          <p className="col-md-2">Start</p>
-          <p className="col-md-2">End</p>
-          <p className="col-md-1">Count</p>
-        </div>
-        {renderDances()}
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {renderDances()}
+          </tbody>
+        </table>
         <button className="btn btn-primary" onClick={() => this.addEdit(null, false)}>Add New Dance</button>
         {renderForm()}
       </div>
