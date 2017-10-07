@@ -88,7 +88,7 @@ export class AddParticipant extends React.Component {
       BookingID: JSON.stringify(this.state.bookingId),
       'Last Name': this.state.lastName,
       Level: this.state.level || { level: 'NA', name: 'NA' },
-      HasLevelCheck: this.state.level.name === 'Advanced',
+      HasLevelCheck: this.state.level.name === 'Advanced' || this.state.level.name === 'Intermediate',
       LevelChecked: false,
       LevelUpdated: false,
       OriginalLevel: this.state.level.name || 'NA',
