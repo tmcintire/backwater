@@ -19,6 +19,7 @@ export class EditParticipant extends React.Component {
     const level = _.filter(this.props.tracks.tracks, t => t.level === this.Level.value);
     const object = {
       Level: level[0],
+      OriginalLevel: level[0].name,
       LeadFollow: this.LeadFollow.value,
       'Amount Owed': this.AmountOwed.value,
       HasPaid: this.HasPaid.value === 'true',
@@ -71,8 +72,8 @@ export class EditParticipant extends React.Component {
                   </select>
                   <label htmlFor="type">Lead/Follow</label>
                   <select className="form-control" defaultValue={participant.LeadFollow} ref={(ref) => { this.LeadFollow = ref; }} >
-                    <option value="Lead">Lead</option>
-                    <option value="Follow">Follow</option>
+                    <option value="lead">Lead</option>
+                    <option value="follow">Follow</option>
                   </select>
                   <label htmlFor="type">Amount Owed</label>
                   <input className="form-control" type="text" defaultValue={participant['Amount Owed']} ref={(ref) => { this.AmountOwed = ref; }} />
