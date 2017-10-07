@@ -79,7 +79,7 @@ export class AddParticipant extends React.Component {
     const moneyLog = {
       bookingId: this.state.bookingId,
       amount: this.state.price,
-      reason: `New registration - ${this.state.level.name || 'N/A'} - ${this.state.pass.name}`,
+      reason: `New registration - ${this.state.level.name || 'NA'} - ${this.state.pass.name}`,
     };
     api.updateMoneyLog(moneyLog);
 
@@ -91,7 +91,7 @@ export class AddParticipant extends React.Component {
       HasLevelCheck: this.state.level.name === 'Advanced',
       LevelChecked: false,
       LevelUpdated: false,
-      OriginalLevel: this.state.level.name || 'N/A',
+      OriginalLevel: this.state.level.name || 'NA',
       HasPaid: this.state.hasPaid,
       LeadFollow: this.state.leadFollow,
       Open: 'No',
