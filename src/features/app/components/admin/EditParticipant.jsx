@@ -23,6 +23,7 @@ export class EditParticipant extends React.Component {
       LeadFollow: this.LeadFollow.value,
       'Amount Owed': this.AmountOwed.value,
       HasPaid: this.HasPaid.value === 'true',
+      TicketType: this.TicketType.value,
       HasLevelCheck: this.HasLevelCheck.value === 'true',
     };
 
@@ -39,6 +40,15 @@ export class EditParticipant extends React.Component {
     return items;
   }
 
+  createSelectPassItems() {
+    let items = [];
+    let passes = helpers.sortTracks(this.props.passes);    
+    _.forIn(passes, (p, index) => {
+      items.push(<option key={index} value={p.name}>{p.name}</option>);
+    });
+    return items;
+  }
+
   render() {
     const renderForm = () => {
       if (this.props.loading === true) {
@@ -46,7 +56,7 @@ export class EditParticipant extends React.Component {
           <Loading />
         );
       }
-      if (this.props.loading === false) {
+      if (this.props.loading === false && this.props.tracksLoading === false && this.props.passesLoading === false) {
         const participant = this.props.registrations.filter((reg) => {
           return reg.BookingID === this.props.params.id;
         })[0];
@@ -64,6 +74,11 @@ export class EditParticipant extends React.Component {
                   <label htmlFor="type">Track</label>
                   <select className="form-control" id="type" onChange={this.handle} defaultValue={participant.Level.level} ref={(ref) => { this.Level = ref; }}>
                     {this.createSelectItems()}
+                  </select>
+                  <label htmlFor="type">Pass</label>
+                  <select className="form-control" name="pass" onChange={this.handleChange} defaultValue={participant.TicketType} ref={(ref) => { this.TicketType = ref; }}>
+                    <option value="" />
+                    {this.createSelectPassItems()}
                   </select>
                   <label htmlFor="type">Has Level Check</label>
                   <select className="form-control" defaultValue={participant.HasLevelCheck} ref={(ref) => { this.HasLevelCheck = ref; }} >
