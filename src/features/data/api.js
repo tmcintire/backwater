@@ -12,7 +12,7 @@ let lastBookingId = 0;
 
 const regRef = firebaseRef.child('registrations');
 const danceRef = firebaseRef.child('Dances');
-const development = false;
+const development = true;
 
 if (development === true) {
   axios({
